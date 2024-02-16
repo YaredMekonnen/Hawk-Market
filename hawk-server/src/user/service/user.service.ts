@@ -60,6 +60,23 @@ export class UserService {
     return user;
   }
 
+  async findOneByEmail(email: string): Promise<IUser> {
+    let user: IUser;
+
+    try {
+      user = await this.userModel.findOne({
+        email,
+      });
+    } catch (err) {
+      throw new BadRequestException('Something Went wrong');
+    }
+
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+    return user;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto): Promise<IUser> {
     let updatedUser: IUser;
     try {
