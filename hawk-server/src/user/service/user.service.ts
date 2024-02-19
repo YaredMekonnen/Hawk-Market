@@ -13,11 +13,12 @@ import { IUser } from '../interface/user.interface';
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<IUser>) {}
+
   async create(createUserDto: CreateUserDto): Promise<IUser> {
     let createdUser: IUser;
 
     try {
-      createdUser = await new this.userModel(createUserDto).save();
+      createdUser = await this.userModel.create(createUserDto);
     } catch (err) {
       throw err;
     }
@@ -123,7 +124,7 @@ export class UserService {
     try {
       user = await this.userModel.findOne({
         email,
-        password,
+        password, 
       });
     } catch (err) {
       throw new BadRequestException('Something Went wrong');

@@ -9,26 +9,33 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Product } from '../schema/product.schema';
 import { Model } from 'mongoose';
 import { IProduct } from '../interface/product.interface';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectModel(Product.name) private productModel: Model<IProduct>,
+    private readonly cloundinaryService: CloudinaryService,
   ) {}
-  async create(createProductDto: CreateProductDto): Promise<IProduct> {
-    let product = new this.productModel(CreateProductDto);
-    let savedProduct: IProduct;
+  async create(createProductDto: CreateProductDto, photos: Express.Multer.File[]): Promise<IProduct> {
+
+    const uploadPromises = photos.map(async (photo) => {
+      const url = await this.cloundinaryService.upload(photo);
+    })
+
+    const photoUrls = await Promise.all(uploadPromises);
 
     try {
-      savedProduct = await product.save();
+
+      return this.productModel.create({
+        ...createProductDto,
+        photos: photoUrls
+      })
+
+
     } catch (err) {
       throw new BadRequestException('Something went wrong');
     }
-
-    if (!savedProduct) {
-      throw new BadRequestException('Something Went Wrong');
-    }
-    return savedProduct;
   }
 
   async findAll(): Promise<IProduct[]> {

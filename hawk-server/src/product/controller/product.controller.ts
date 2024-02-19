@@ -21,8 +21,8 @@ export class ProductController {
 
   @Post()
   @UseInterceptors(FileInterceptor('photos'))
-  create(@UploadedFiles() files: Express.Multer.File[], @Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  create(@UploadedFiles() photos: Express.Multer.File[], @Body() createProductDto: CreateProductDto) {
+    return this.productService.create(createProductDto, photos);
   }
 
   @Get()

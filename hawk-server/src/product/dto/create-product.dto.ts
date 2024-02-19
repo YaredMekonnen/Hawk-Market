@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty()
@@ -13,8 +13,6 @@ export class CreateProductDto {
   @IsNumber()
   @Min(0)
   price;
-
-  photos;
 
   @IsNotEmpty()
   @IsString()
