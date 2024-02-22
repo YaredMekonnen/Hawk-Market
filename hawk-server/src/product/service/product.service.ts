@@ -28,8 +28,8 @@ export class ProductService {
     try {
 
       return this.productModel.create({
-        ...createProductDto,
-        photos: photoUrls
+        photos: photoUrls,
+        ...createProductDto
       })
 
 
@@ -53,7 +53,7 @@ export class ProductService {
     return products;
   }
 
-  async findOne(id: number): Promise<IProduct> {
+  async findOne(id: string): Promise<IProduct> {
     let product: IProduct;
 
     try {
@@ -70,7 +70,7 @@ export class ProductService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateProductDto: UpdateProductDto,
   ): Promise<IProduct> {
     let updatedProduct: IProduct;
@@ -87,7 +87,7 @@ export class ProductService {
     return updatedProduct;
   }
 
-  async remove(id: number): Promise<IProduct> {
+  async remove(id: string): Promise<IProduct> {
     let product: IProduct;
     try {
       await this.findOne(id);

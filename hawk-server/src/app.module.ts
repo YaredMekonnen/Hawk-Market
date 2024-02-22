@@ -6,15 +6,17 @@ import { ProductModule } from './product/product.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot("mongodb://localhost:27017", {
-      dbName: "hawk",
+      dbName: "Hawk",
     }),
     UserModule,
     ProductModule,
     AuthModule,
+    MessageModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
