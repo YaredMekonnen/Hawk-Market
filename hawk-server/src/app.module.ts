@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { MessageModule } from './message/message.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MessageModule } from './message/message.module';
     ProductModule,
     AuthModule,
     MessageModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
