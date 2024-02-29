@@ -13,42 +13,42 @@ export class MessageService {
     @InjectModel(Message.name) private messageModel: Model<IMessage>,
   ) {}
 
-  create(createMessageDto: CreateMessageDto) {
+  async create(createMessageDto: CreateMessageDto) {
 
     try{
-      return this.messageModel.create(createMessageDto);
+      return await  this.messageModel.create(createMessageDto);
     } catch (err) {
       throw new Error('Something went wrong');
     }
   }
 
-  findAll() {
+  async findAll() {
     try {
-      return this.messageModel.find();
+      return await this.messageModel.find();
     } catch (err) {
       throw new Error('Something went wrong');
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      return this.messageModel.findById(id);
+      return await this.messageModel.findById(id);
     } catch (err) {
       throw new Error('Something went wrong');
     }
   }
 
-  update(id: string, updateMessageDto: UpdateMessageDto) {
+  async update(id: string, updateMessageDto: UpdateMessageDto) {
     try{
-      return this.messageModel.findByIdAndUpdate(id, updateMessageDto, {new: true});
+      return await this.messageModel.findByIdAndUpdate(id, updateMessageDto, {new: true});
     } catch (err) {
       throw new Error('Something went wrong');
     }
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     try {
-      return this.messageModel.findByIdAndDelete(id);
+      return await this.messageModel.findByIdAndDelete(id);
     } catch (err) {
       throw new Error('Something went wrong');
     }
