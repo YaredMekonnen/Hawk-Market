@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ThemeClass {
   static Color primarColor = const Color.fromRGBO(255, 205, 0, 100);
@@ -9,6 +10,7 @@ class ThemeClass {
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
+    scaffoldBackgroundColor: backgroundColor,
     colorScheme: const ColorScheme.dark().copyWith(
       primary: primarColor,
       secondary: secondaryColor,
@@ -81,7 +83,7 @@ class ThemeClass {
       ),
       iconTheme: IconThemeData(
         color: Colors.orange,
-        size: 24,
+        size: 12.w,
       ),
   );
 }

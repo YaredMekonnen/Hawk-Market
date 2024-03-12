@@ -11,7 +11,10 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
+        title: Text(
+          'Search',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
     );
   }

@@ -11,7 +11,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
+        title: Text('Create Post', style: TextStyle(color: Colors.white),),
       ),
     );
   }

@@ -1,8 +1,7 @@
 import "package:hawk_app/auth/pages/index.dart";
 import "package:hawk_app/chat/pages/index.dart";
-import "package:hawk_app/create_post/pages/create_post.dart";
+import 'package:hawk_app/create_post/pages/create_post_page.dart';
 import "package:hawk_app/home/pages/index.dart";
-import "package:hawk_app/home/pages/item_list_page.dart";
 import "package:hawk_app/profile/pages/index.dart";
 
 import "package:flutter/material.dart";
@@ -23,11 +22,12 @@ class AppRouter extends StatelessWidget {
       title: "Hawk",
       theme: ThemeClass.lightTheme,
       routerConfig: GoRouter(
+        navigatorKey: parentKey,
         initialLocation: "/",
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) {
-              return HomePage();
+              return HomePage(child: navigationShell);
             },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
@@ -68,23 +68,23 @@ class AppRouter extends StatelessWidget {
                 ]
               ),
               StatefulShellBranch(
-                navigatorKey: profileKey,
-                routes: [
-                  GoRoute(
-                    path: "/profile",
-                    builder: (context, state) {
-                      return SelfProfilePage();
-                    }
-                  ),
-                ]
-              ),
-              StatefulShellBranch(
                 navigatorKey: createPostKey,
                 routes: [
                   GoRoute(
                     path: "/create-post",
                     builder: (context, state) {
                       return CreatePostPage();
+                    }
+                  ),
+                ]
+              ),
+              StatefulShellBranch(
+                navigatorKey: profileKey,
+                routes: [
+                  GoRoute(
+                    path: "/profile",
+                    builder: (context, state) {
+                      return SelfProfilePage();
                     }
                   ),
                 ]
