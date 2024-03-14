@@ -82,7 +82,7 @@ class AppRouter extends StatelessWidget {
                 navigatorKey: profileKey,
                 routes: [
                   GoRoute(
-                    path: "/profile",
+                    path: "/account",
                     builder: (context, state) {
                       return SelfProfilePage();
                     }
