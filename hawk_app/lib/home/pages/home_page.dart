@@ -36,13 +36,16 @@ class _HomePageState extends State<HomePage> {
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
+          //this is the shells branches
           widget.child,
 
           Container(
             width: 70.w,
             height: 15.w,
+            margin: EdgeInsets.only(bottom: 3.w),
             alignment: Alignment.bottomCenter,
             decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
               border: Border.all(
                 color: Colors.white,
                 width: 1,
