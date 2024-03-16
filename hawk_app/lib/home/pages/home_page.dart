@@ -11,17 +11,16 @@ class HomePage extends StatefulWidget {
   });
 
   final StatefulNavigationShell child;
-  var _selectedIndex = 0;
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
 
+  int _selectedIndex = 0;
   void _onItemTapped(BuildContext context, int index) {
     setState(() {
-      widget._selectedIndex = index;
+      _selectedIndex = index;
     });
     widget.child.goBranch(
       index,
@@ -56,14 +55,19 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                  icon: Icon(Icons.home),
+                  color: _selectedIndex == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+                  icon: Icon(
+                    Icons.home,
+                  ),
                   onPressed: () => _onItemTapped(context, 0),
                 ),
                 IconButton(
+                  color: _selectedIndex == 1 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
                   icon: Icon(Icons.add_circle_outline),
                   onPressed: () => _onItemTapped(context, 1),
                 ),
                 IconButton(
+                  color: _selectedIndex == 2 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
                   icon: Icon(Icons.account_circle_outlined),
                   onPressed: () => _onItemTapped(context, 2),
                 ),

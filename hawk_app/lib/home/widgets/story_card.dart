@@ -11,7 +11,7 @@ class StoryCard extends StatelessWidget {
         Container(
           width: 20.w,
           height: 20.w,
-          margin: EdgeInsets.all(0.5.w),
+          margin: EdgeInsets.all(0.8.w),
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage('assets/story/story.jpg'), 

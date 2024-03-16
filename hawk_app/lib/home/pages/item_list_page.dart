@@ -34,6 +34,7 @@ class _ItemListPageState extends State<ItemListPage> {
               Icons.search
             ),
             onPressed: () {
+              GoRouter.of(context).go('/search');
             },
           ),
           IconButton(
@@ -48,6 +49,7 @@ class _ItemListPageState extends State<ItemListPage> {
       ),
       body: Column(
         children: [
+          
           Container(
             width: 100.w,
             constraints: BoxConstraints(maxHeight: 30.w),

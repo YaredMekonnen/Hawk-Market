@@ -126,7 +126,27 @@ class _ItemCardState extends State<ItemCard> {
                 children: [
                   ElevatedButton(
                     onPressed: (){}, 
-                    child: Text("Buy")
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.w)
+                      ),
+                      textStyle: MaterialStateProperty.all<TextStyle>(
+                        TextStyle(
+                          fontSize: 20.sp
+                        )
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(3.5.w)
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      "Buy",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.background
+                      ),
+                    )
                   ),
                   IconButton(
                     onPressed: (){}, 

@@ -80,7 +80,7 @@ class ThemeClass {
         
       ),
       iconTheme: IconThemeData(
-        color: primarColor,
+        color: secondaryColor,
         size: 10.w,
         
       ),
