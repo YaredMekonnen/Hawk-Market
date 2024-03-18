@@ -2,21 +2,24 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:hawk_app/commons/sidebar.dart';
 
 class HomePage extends StatefulWidget {
   
   HomePage({
     super.key,
+    required this.scaffoldKey,
     required this.child,
   });
 
+  final GlobalKey<ScaffoldState> scaffoldKey;
   final StatefulNavigationShell child;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
+  
   int _selectedIndex = 0;
   void _onItemTapped(BuildContext context, int index) {
     setState(() {
@@ -31,7 +34,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      key: widget.scaffoldKey,
+      drawer: Sidebar(),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [

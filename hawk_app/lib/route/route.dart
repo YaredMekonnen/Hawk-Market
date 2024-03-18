@@ -15,6 +15,7 @@ class AppRouter extends StatelessWidget {
   GlobalKey<NavigatorState> homeKey = GlobalKey<NavigatorState>();
   GlobalKey<NavigatorState> profileKey = GlobalKey<NavigatorState>();
   GlobalKey<NavigatorState> createPostKey = GlobalKey<NavigatorState>();
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context){
@@ -27,7 +28,7 @@ class AppRouter extends StatelessWidget {
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) {
-              return HomePage(child: navigationShell);
+              return HomePage(child: navigationShell, scaffoldKey: scaffoldKey,);
             },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
@@ -36,7 +37,7 @@ class AppRouter extends StatelessWidget {
                   GoRoute(
                     path: "/",
                     builder: (context, state) {
-                      return ItemListPage();
+                      return ItemListPage(scaffoldKey: scaffoldKey);
                     },
                     routes: <RouteBase>[
                       GoRoute(
