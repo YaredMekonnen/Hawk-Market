@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SplashPage extends StatefulWidget {
   
@@ -19,7 +20,10 @@ class _SplashPageState extends State<SplashPage> {
         children: [
           Text(
             'Hawk Market',
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: TextStyle(
+              color: Theme.of(context).primaryColor,
+              fontSize: 7.w
+            ),
           ),
           Image(image: AssetImage('assets/splash.png')),
         ]
