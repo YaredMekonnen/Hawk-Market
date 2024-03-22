@@ -11,18 +11,13 @@ import "package:hawk_app/theme/theme.dart";
 class AppRouter extends StatelessWidget {
 
 
-  GlobalKey<NavigatorState> parentKey = GlobalKey<NavigatorState>();
-  GlobalKey<NavigatorState> homeKey = GlobalKey<NavigatorState>();
-  GlobalKey<NavigatorState> profileKey = GlobalKey<NavigatorState>();
-  GlobalKey<NavigatorState> createPostKey = GlobalKey<NavigatorState>();
-  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  static GlobalKey<NavigatorState> parentKey = GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState> homeKey = GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState> profileKey = GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState> createPostKey = GlobalKey<NavigatorState>();
+  static GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  Widget build(BuildContext context){
-    return MaterialApp.router(
-      title: "Hawk",
-      theme: ThemeClass.lightTheme,
-      routerConfig: GoRouter(
+  static final GoRouter router = GoRouter(
         navigatorKey: parentKey,
         initialLocation: "/",
         routes: <RouteBase>[
@@ -91,9 +86,28 @@ class AppRouter extends StatelessWidget {
                 ]
               ),
             ]
+          ),
+          GoRoute(
+            path: '/login',
+            builder: (context, state) {
+              return SignInPage();
+            },
+          ),
+           GoRoute(
+            path: '/signup',
+            builder: (context, state) {
+              return SignUpPage();
+            },
           )
         ],
-      ),
+      );
+
+  @override
+  Widget build(BuildContext context){
+    return MaterialApp.router(
+      title: "Hawk",
+      theme: ThemeClass.lightTheme,
+      routerConfig: router
     );
   }
 

@@ -18,6 +18,7 @@ class _ItemListPageState extends State<ItemListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -39,7 +40,15 @@ class _ItemListPageState extends State<ItemListPage> {
               ),
               IconButton(
                 icon: Icon(Icons.chat),
-                onPressed: () {},
+                onPressed: () {
+                  GoRouter.of(context).go('/signup');
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.login),
+                onPressed: () {
+                  GoRouter.of(context).go('/login');
+                },
               ),
             ],
           ),
