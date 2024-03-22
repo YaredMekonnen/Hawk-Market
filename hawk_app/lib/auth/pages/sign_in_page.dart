@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hawk_app/commons/textfield.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SignInPage extends StatefulWidget {
@@ -11,75 +12,91 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Hawk Market',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          Container(
-            width: 100.w,
-            height: 100.w,
-            child: Column(
-              children: [
-                Text(
-                  'Welcome back',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  'Sign in to your account',
-                  style: Theme.of(context).textTheme.bodySmall,
-                )
-              ]
-            ),
-          ),
-          Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-
-              TextButton(
-                onPressed:()=>{} , 
-                child: Text(
-                  'Forgot Password?',
-                  style: Theme.of(context).textTheme.bodySmall,
-                )
-              )
-            ],
-          ),
-
-          ElevatedButton(
-            onPressed: ()=>{}, 
-            child: Text('Login')
-          ),
-          Row(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        surfaceTintColor: Colors.transparent,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: 85.h,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Don\'t have an account?',
-                style: Theme.of(context).textTheme.bodySmall,
+                'Hawk Market',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 10.w,
+                  fontWeight: FontWeight.bold
+                ),
               ),
-              TextButton(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 90.w,
+                  ),
+                  Text(
+                    "Welcome back,"
+                  ),
+                  Text(
+                    "Sign in to your account."
+                  )
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CustomeTextField(hintText: "Email"),
+                  SizedBox(
+                    height: 4.w,
+                  ),
+                  CustomeTextField(hintText: "Password")
+                ],
+              ),
+          
+              ElevatedButton(
                 onPressed: ()=>{}, 
                 child: Text(
-                  'Sign Up',
-                  style: Theme.of(context).textTheme.bodySmall,
-                )
+                  'Login',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.background
+                  ),
+                ),
+                style: ButtonStyle(
+
+                  minimumSize: MaterialStateProperty.resolveWith((states) => Size(90.w, 13.w)),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Don\'t have an account?',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  TextButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.w)),
+                      minimumSize: MaterialStateProperty.resolveWith((states) => Size(0, 0))
+                    ),
+                    onPressed: ()=>{}, 
+                    child: Text(
+                      'Sign up',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 4.w
+                      ),
+                      
+                    )
+                  )
+                ],
               )
-            ],
-          )
-        ]
+            ]
+          ),
+        ),
       )
     );
   }
