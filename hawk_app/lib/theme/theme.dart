@@ -28,53 +28,53 @@ class ThemeClass {
     textTheme: TextTheme(
         displayLarge: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 20,
+            fontSize: 5.w,
             fontWeight: FontWeight.bold,
             color: secondaryColor
         ),
         displayMedium: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 18,
+            fontSize: 4.5.w,
             fontWeight: FontWeight.bold,
             color: secondaryColor
         ),
         displaySmall: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 16,
+            fontSize: 4.w,
             fontWeight: FontWeight.bold,
             color: secondaryColor
         ),
         titleLarge: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 18,
+            fontSize: 7.w,
             fontWeight: FontWeight.bold,
             color: secondaryColor
         ),
         titleMedium: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 14,
+            fontSize: 3.5.w,
             fontWeight: FontWeight.bold,
             color: secondaryColor
         ),
         titleSmall: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 12,
+            fontSize: 3.w,
             fontWeight: FontWeight.bold,
             color: secondaryColor
         ),
         bodyLarge:GoogleFonts.getFont(
             'Outfit',
-            fontSize: 16,
+            fontSize: 7.w,
             color: secondaryColor
         ),
         bodyMedium: GoogleFonts.getFont(
             'Outfit',
-            fontSize: 14,
+            fontSize: 3.5.w,
             color: secondaryColor
         ),
         bodySmall: GoogleFonts.getFont(
           'Outfit',
-          fontSize: 12,
+          fontSize: 3.w,
           color: secondaryColor.withOpacity(0.4)
         ),
         
