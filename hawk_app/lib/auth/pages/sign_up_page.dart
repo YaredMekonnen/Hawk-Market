@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hawk_app/commons/textfield.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -15,6 +16,12 @@ class _SignUpPageState extends State<SignUpPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            GoRouter.of(context).go('/');
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -76,7 +83,9 @@ class _SignUpPageState extends State<SignUpPage> {
                       padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.w)),
                       minimumSize: MaterialStateProperty.resolveWith((states) => Size(0, 0))
                     ),
-                    onPressed: ()=>{}, 
+                    onPressed: ()=>{
+                      GoRouter.of(context).go('/login')
+                    }, 
                     child: Text(
                       'Login',
                       style: TextStyle(

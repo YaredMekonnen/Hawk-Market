@@ -16,6 +16,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            GoRouter.of(context).go('/login');
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -24,13 +30,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image(
-                image: AssetImage('assets/forgot.png'),
-                width: 90.w,
-                fit: BoxFit.contain,
-              ),
               Column(
                 children: [
+                  Image(
+                    image: AssetImage('assets/forgot.png'),
+                    width: 90.w,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(height: 4.w,),
                   Text(
                     'Forgot Password?',
                     style: Theme.of(context).textTheme.titleLarge,
@@ -41,18 +48,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     style: Theme.of(context).textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),
-                ],
-              ),
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
+                  SizedBox(height: 8.w,),
                   CustomeTextField(hintText: "Email"),
                 ],
               ),
               ElevatedButton(
                 onPressed: (){
-                  GoRouter.of(context).go('/reset-password');
-                }, 
+                  GoRouter.of(context).go('/verify-email');
+                },
                 child: Text(
                   'Verify',
                   style: TextStyle(

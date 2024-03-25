@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hawk_app/commons/textfield.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -15,6 +16,12 @@ class _SignInPageState extends State<SignInPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            GoRouter.of(context).go('/');
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -47,12 +54,22 @@ class _SignInPageState extends State<SignInPage> {
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   CustomeTextField(hintText: "Email"),
                   SizedBox(
                     height: 4.w,
                   ),
-                  CustomeTextField(hintText: "Password")
+                  CustomeTextField(hintText: "Password"),
+                  TextButton(
+                    onPressed: (){
+                      GoRouter.of(context).go('/forgot-password');
+                    }, 
+                    child: Text(
+                      'Forgot Password?',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  )
                 ],
               ),
           
@@ -82,7 +99,9 @@ class _SignInPageState extends State<SignInPage> {
                       padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.symmetric(horizontal: 0.w, vertical: 0.w)),
                       minimumSize: MaterialStateProperty.resolveWith((states) => Size(0, 0))
                     ),
-                    onPressed: ()=>{}, 
+                    onPressed: ()=>{
+                      GoRouter.of(context).go('/signup')
+                    }, 
                     child: Text(
                       'Sign up',
                       style: TextStyle(

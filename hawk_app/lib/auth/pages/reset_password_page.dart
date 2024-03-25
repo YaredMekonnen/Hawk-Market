@@ -14,6 +14,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            GoRouter.of(context).go('/verify-email');
+          },
+        ),
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
@@ -25,15 +31,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image(
-                image: AssetImage('assets/reset-password.png'),
-                width: 90.w,
-                fit: BoxFit.contain,
-              ),
               Container(
                 width: 90.w,
                 child: Column(
                   children: [
+                    Image(
+                      image: AssetImage('assets/reset-password.png'),
+                      width: 90.w,
+                      fit: BoxFit.contain,
+                    ),
                     Text(
                       'Reset Password',
                       style: Theme.of(context).textTheme.titleLarge,
@@ -44,20 +50,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
+                    SizedBox(height: 4.w,),
+                    CustomeTextField(hintText: "Old Password"),
+                    SizedBox(
+                      height: 4.w,
+                    ),
+                    CustomeTextField(hintText: "New Password"),
                   ],
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CustomeTextField(hintText: "Old Password"),
-                  SizedBox(
-                    height: 4.w,
-                  ),
-                  CustomeTextField(hintText: "New Password")
-                ],
-              ),
-          
+
               ElevatedButton(
                 onPressed: ()=>{}, 
                 child: Text(
