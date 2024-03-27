@@ -93,12 +93,30 @@ class MyApp extends StatelessWidget {
             ]
           ),
           GoRoute(
+            path: '/verify-email',
+            builder: (context, state) {
+              return OtpPage();
+            },
+          ),
+          GoRoute(
+            path: '/forgot-password',
+            builder: (context, state) {
+              return ForgotPasswordPage();
+            },
+          ),
+          GoRoute(
+            path: '/reset-password',
+            builder: (context, state) {
+              return ResetPasswordPage();
+            },
+          ),
+          GoRoute(
             path: '/login',
             builder: (context, state) {
               return SignInPage();
             },
           ),
-           GoRoute(
+          GoRoute(
             path: '/signup',
             builder: (context, state) {
               return SignUpPage();
@@ -116,7 +134,8 @@ class MyApp extends StatelessWidget {
         return MaterialApp.router(
           title: "Hawk",
           theme: ThemeClass.lightTheme,
-          routerConfig: router
+          routerConfig: router,
+          
         );
       }
     );
