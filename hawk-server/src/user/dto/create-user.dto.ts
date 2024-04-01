@@ -4,14 +4,22 @@ import {
   IsEmail,
   MinLength,
   MaxLength,
+  IsOptional,
 } from 'class-validator';
+import { Otp } from '../types/otp.type';
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(30)
-  name: string;
+  firstName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(30)
+  lastName: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -22,4 +30,7 @@ export class CreateUserDto {
   @MinLength(6)
   @MaxLength(30)
   password: string;
+
+  @IsOptional()
+  otp: Otp;
 }
