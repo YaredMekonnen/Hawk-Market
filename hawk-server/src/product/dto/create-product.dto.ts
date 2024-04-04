@@ -3,26 +3,22 @@ import { IsArray, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
-  name;
+  name: string;
 
   @IsNotEmpty()
   @IsString()
-  description;
+  description: string;
 
   @IsNotEmpty()
   @IsNumber()
-  @Min(0)
-  price;
+  @Min(1)
+  price: number;
 
   @IsNotEmpty()
   @IsString()
-  category;
+  tags: string;
 
   @IsNotEmpty()
   @IsString()
-  condition;
-
-  @IsNotEmpty()
-  @IsString()
-  brand;
+  owner: string;
 }

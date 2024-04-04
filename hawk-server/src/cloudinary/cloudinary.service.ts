@@ -13,7 +13,7 @@ export class CloudinaryService {
     });
   }
 
-  upload(file: any): Promise<any> {
+  upload(file: any): Promise<string> {
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream({ resource_type: 'auto' }, (error, result) => {
         if (error) {

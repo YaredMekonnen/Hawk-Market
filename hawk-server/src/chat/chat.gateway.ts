@@ -22,12 +22,10 @@ export class ChatGateway {
     const {chatId} = payload;
 
     try{
-
       client.join(chatId)
     } catch(e){
       this.server.to(chatId).emit("chatError", "Error on joing chat room")
     }
-    
   }
 
   @SubscribeMessage("message")

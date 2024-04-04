@@ -7,7 +7,7 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product } from '../schema/product.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { IProduct } from '../interface/product.interface';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
@@ -20,16 +20,17 @@ export class ProductService {
   async create(createProductDto: CreateProductDto, photos: Express.Multer.File[]): Promise<IProduct> {
 
     const uploadPromises = photos.map(async (photo) => {
-      const url = await this.cloundinaryService.upload(photo);
+      return this.cloundinaryService.upload(photo);
     })
 
     const photoUrls = await Promise.all(uploadPromises);
 
     try {
 
-      return this.productModel.create({
+      return await this.productModel.create({
         photos: photoUrls,
-        ...createProductDto
+        ...createProductDto,
+        owner: new Types.ObjectId(createProductDto.owner)
       })
 
 
@@ -38,19 +39,25 @@ export class ProductService {
     }
   }
 
-  async findAll(): Promise<IProduct[]> {
+  async findAll(page: number, limit: number, search: string): Promise<{data: IProduct[]}> {
     let products: IProduct[];
 
+    const skip = ((page || 1) - 1) * (limit || 10);
+    
     try {
-      products = await this.productModel.find();
+      products = await this.productModel.find(
+        search !== '' ? { name: { $regex: search, $options: 'i' } } : {}
+      ).skip(skip)
+      .limit(limit || 10)
+      .populate('owner')
+      .exec();
+
+      return {
+        data: products
+      }
     } catch (err) {
       throw new BadRequestException('Something Went Wrong');
     }
-
-    if (!products) {
-      throw new NotFoundException('Products Not Found');
-    }
-    return products;
   }
 
   async findOne(id: string): Promise<IProduct> {
@@ -96,5 +103,26 @@ export class ProductService {
       throw err;
     }
     return product;
+  }
+
+  async getPosted(userId: string, page: number, limit: number, search: string): Promise<{data: IProduct[]}> {
+    let products: IProduct[];
+
+    const skip = ((page || 1) - 1) * (limit || 10);
+    
+    try {
+      products = await this.productModel.find(
+        { owner: userId }
+      ).skip(skip)
+      .limit(limit)
+      .populate('owner')
+      .exec();
+
+      return {
+        data: products
+      }
+    } catch (err) {
+      throw new BadRequestException('Something Went Wrong');
+    }
   }
 }
