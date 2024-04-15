@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hawk_app/commons/textfield.dart';
+import 'package:hawk_app/auth/blocs/forgot_password_bloc/forgot_password_bloc.dart';
+import 'package:hawk_app/commons/widgets/textfield.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -10,6 +12,9 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+
+  final TextEditingController emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,23 +54,49 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 8.w,),
-                  CustomeTextField(hintText: "Email"),
+                  CustomeTextField(hintText: "Email", controller: emailController),
                 ],
               ),
               ElevatedButton(
                 onPressed: (){
-                  GoRouter.of(context).go('/verify-email');
+                  BlocProvider.of<ForgotPasswordBloc>(context).add(
+                    ForgotPassword(email: emailController.text)
+                  );
                 },
-                child: Text(
-                  'Verify',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.background
-                  ),
-                ),
                 style: ButtonStyle(
 
                   minimumSize: MaterialStateProperty.resolveWith((states) => Size(90.w, 13.w)),
                 ),
+                child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+                      builder: (context, state) {
+                        if (state is ForgotPasswordLoading) {
+                          return CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.background,
+                            strokeWidth: 1.w,
+                          );
+                        }
+                        if (state is ForgotPasswordFailed) {
+                          return Text(
+                            'Error',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.background),
+                          );
+                        }
+                        if (state is ForgotPasswordSuccess) {
+                          GoRouter.of(context).go('/verify-otp');
+                          return Text(
+                          'Success',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.background),
+                        );
+                        }
+                        return Text(
+                          'Verify',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.background),
+                        );
+                      },
+                    ),
               ),
             ]
           ),

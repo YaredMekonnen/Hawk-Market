@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hawk_app/auth/blocs/forgot_password_bloc/forgot_password_bloc.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class OtpPage extends StatefulWidget {
@@ -83,17 +85,41 @@ class _OtpPageState extends State<OtpPage> {
 
               ElevatedButton(
                 onPressed: ()=>{
-                  GoRouter.of(context).go('/reset-password')
-                }, 
-                child: Text(
-                  'Verify',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.background
-                  ),
-                ),
+                  BlocProvider.of<ForgotPasswordBloc>(context).add(VerifyOtp(otp: getOtpValue()))
+                },
                 style: ButtonStyle(
                   minimumSize: MaterialStateProperty.resolveWith((states) => Size(90.w, 13.w)),
-                ),
+                ), 
+                child: BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
+                      builder: (context, state) {
+                        if (state is VerifyOtpLoading) {
+                          return CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.background,
+                            strokeWidth: 1.w,
+                          );
+                        }
+                        if (state is VerifyOtpFailed) {
+                          return Text(
+                            'Error',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.background),
+                          );
+                        }
+                        if (state is VerifyOtpSuccess) {
+                          GoRouter.of(context).go('/reset-password');
+                          return Text(
+                            'Success',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.background),
+                          );
+                        }
+                        return Text(
+                          'Verify',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.background),
+                        );
+                      },
+                    ),
               ),
             ]
           ),
@@ -138,5 +164,9 @@ class _OtpPageState extends State<OtpPage> {
         ),
       ),
     );
+  }
+
+  getOtpValue(){
+    return contrller1!.text + contrller2!.text + contrller3!.text + contrller4!.text;
   }
 }
