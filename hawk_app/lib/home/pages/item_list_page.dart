@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hawk_app/commons/sidebar.dart';
+import 'package:hawk_app/auth/blocs/auth_cubit/auth_cubit.dart';
+import 'package:hawk_app/create_product/models/product.dart';
+import 'package:hawk_app/home/blocs/product_list_bloc/product_list_bloc.dart';
 import 'package:hawk_app/home/widgets/item_card.dart';
 import 'package:hawk_app/home/widgets/story_card.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ItemListPage extends StatefulWidget {
-  ItemListPage({required this.scaffoldKey});
+  // ItemListPage({required this.scaffoldKey});
 
-  final GlobalKey<ScaffoldState> scaffoldKey;
+  // final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   State<ItemListPage> createState() => _ItemListPageState();
 }
 
 class _ItemListPageState extends State<ItemListPage> {
+
+  final List<Product> products = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<ProductListBloc>().add(ProductListLoad(1, 10));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +40,7 @@ class _ItemListPageState extends State<ItemListPage> {
             leading: IconButton(
               icon: Icon(Icons.menu),
               onPressed: () {
-                widget.scaffoldKey.currentState!.openDrawer();
+                // widget.scaffoldKey.currentState!.openDrawer();
               },
             ),
             actions: [
@@ -38,9 +51,9 @@ class _ItemListPageState extends State<ItemListPage> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.chat),
+                icon: Icon(Icons.logout),
                 onPressed: () {
-                  GoRouter.of(context).go('/signup');
+                  context.read<AuthCubit>().logout();
                 },
               ),
               IconButton(
@@ -59,11 +72,14 @@ class _ItemListPageState extends State<ItemListPage> {
                   Container(
                     width: 100.w,
                     constraints: BoxConstraints(maxHeight: 30.w),
-                    padding: EdgeInsets.only(right: 4.w, left: 4.w, bottom: 1.6.w),
+                    padding: EdgeInsets.only(right: 4.w, bottom: 1.6.w),
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: 10,
                       itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return SizedBox(width: 1.w);
+                        }
                         return StoryCard();
                       },
                       separatorBuilder: (context, index) {
@@ -80,13 +96,32 @@ class _ItemListPageState extends State<ItemListPage> {
               ),
             ),
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return ItemCard();
-              },
-              childCount: 3,
-            ),
+          BlocBuilder<ProductListBloc, ProductListState>(
+            builder: (context, state) {
+              if (state is ProductListLoading) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              if (state is ProductListLoaded){
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return ItemCard(product: state.products[index]);
+                    },
+                    childCount: state.products.length,
+                  ),
+                );
+              }
+
+              return SliverFillRemaining(
+                  child: Center(
+                    child: Text('Error'),
+                  ),
+                );
+            },
           ),
         ],
       ),

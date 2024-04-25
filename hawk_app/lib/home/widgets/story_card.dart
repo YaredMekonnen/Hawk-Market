@@ -28,7 +28,10 @@ class StoryCard extends StatelessWidget {
           ),
         ),
         SizedBox(height: 1.6.w,),
-        Text("Your story")
+        Text(
+          "Your story", 
+          style: Theme.of(context).textTheme.bodySmall
+        )
       ],
     );
   }

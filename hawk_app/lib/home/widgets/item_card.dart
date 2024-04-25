@@ -1,9 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hawk_app/commons/circular_profile.dart';
+import 'package:hawk_app/commons/widgets/circular_profile.dart';
+import 'package:hawk_app/create_product/models/product.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import "package:dots_indicator/dots_indicator.dart";
 
 class ItemCard extends StatefulWidget {
+
+  const ItemCard({required this.product});
+  final Product product;
 
   @override
   State<ItemCard> createState() => _ItemCardState();
@@ -78,10 +83,25 @@ class _ItemCardState extends State<ItemCard> {
             child: PageView.builder(
               controller: _controller,
               scrollDirection: Axis.horizontal,
-              itemCount: 3,
+              itemCount: widget.product.images.length,
               itemBuilder: (context, index){
-                return Image(
-                  image:  AssetImage('assets/story/story.jpg'),
+                return CachedNetworkImage(
+                  imageUrl: widget.product.images[index],
+                  progressIndicatorBuilder: (context, url, downloadProgress) => 
+                          Center(
+                            heightFactor: 1,
+                            widthFactor: 1,
+                            child: Container(
+                              width: 10.w,
+                              height: 10.w,
+                              constraints: BoxConstraints(maxHeight: 10.w, maxWidth: 10.w),
+                              child: CircularProgressIndicator(
+                                value: downloadProgress.progress,
+                                strokeWidth: 1.w,
+                              ),
+                            ),
+                          ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                   fit: BoxFit.cover,
                 );
               }
@@ -89,7 +109,7 @@ class _ItemCardState extends State<ItemCard> {
           ),
 
           DotsIndicator(
-            dotsCount: 3,
+            dotsCount: widget.product.images.length,
             position: _currentPage,
             decorator: DotsDecorator(
               color: Theme.of(context).colorScheme.secondary,
@@ -105,17 +125,24 @@ class _ItemCardState extends State<ItemCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "MacBook Pro M3"
+                    widget.product.name,
+                    style: Theme.of(context).textTheme.displayLarge,
                   ),
                   Row(
                     children: [
                       Text(
-                        "380"
+                        "\$${widget.product.price}",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      SizedBox(
+                        width: 4.w,
                       ),
                       Text(
-                        "54 min ago"
+                        "54 min ago",
+                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   )
@@ -125,7 +152,7 @@ class _ItemCardState extends State<ItemCard> {
               Row(
                 children: [
                   ElevatedButton(
-                    onPressed: (){}, 
+                    onPressed: (){},
                     style: ButtonStyle(
                       padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
                         EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.w)
