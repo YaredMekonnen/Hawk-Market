@@ -15,6 +15,7 @@ class ThemeClass {
       primary: primarColor,
       secondary: secondaryColor,
       background: backgroundColor,
+      tertiary: secondaryColor2,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -29,19 +30,19 @@ class ThemeClass {
         displayLarge: GoogleFonts.getFont(
             'Outfit',
             fontSize: 5.w,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
             color: secondaryColor
         ),
         displayMedium: GoogleFonts.getFont(
             'Outfit',
             fontSize: 4.5.w,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
             color: secondaryColor
         ),
         displaySmall: GoogleFonts.getFont(
             'Outfit',
             fontSize: 4.w,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.normal,
             color: secondaryColor
         ),
         titleLarge: GoogleFonts.getFont(
@@ -82,7 +83,6 @@ class ThemeClass {
       iconTheme: IconThemeData(
         color: secondaryColor,
         size: 10.w,
-        
       ),
   );
 }

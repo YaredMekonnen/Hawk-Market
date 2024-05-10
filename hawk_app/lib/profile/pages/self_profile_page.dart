@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hawk_app/home/widgets/story_card.dart';
+import 'package:hawk_app/profile/blocs/profile_bloc/profile_bloc.dart';
+import 'package:hawk_app/profile/widgets/profile_dialog.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SelfProfilePage extends StatefulWidget {
@@ -9,6 +11,17 @@ class SelfProfilePage extends StatefulWidget {
 }
 
 class _SelfProfilePageState extends State<SelfProfilePage> {
+
+  final PageController _controller = PageController();
+  int _currentPage = 0;
+  changePage(page) {
+    setState(() {
+      if (_currentPage != page){
+        _currentPage = page;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,29 +29,37 @@ class _SelfProfilePageState extends State<SelfProfilePage> {
       CustomScrollView(
         slivers: [
           SliverAppBar(
-        floating: true,
-        backgroundColor: Theme.of(context).colorScheme.background,
-        leading: IconButton(
-          icon: Icon(
-            size: 8.w,
-            Icons.menu,
-          ),
-          onPressed: () {
-          },
-        ),
-        actions: [
-          PopupMenuButton(itemBuilder: (context) {
-            return [
-              PopupMenuItem(
-                child: Text("Settings"),
+            floating: true,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            leading: IconButton(
+              icon: Icon(
+                size: 8.w,
+                Icons.menu,
               ),
-              PopupMenuItem(
-                child: Text("Log Out"),
-              )
-            ];
-          })
-        ],
-      ),
+              onPressed: () {
+              },
+            ),
+            actions: [
+              PopupMenuButton(itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    child: Text("Edit Profile"),
+                    onTap: () => {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ProfileDialog();
+                          }
+                      )
+                    },
+                  ),
+                  PopupMenuItem(
+                    child: Text("Logout"),
+                  )
+                ];
+              })
+            ],
+          ),
           SliverPadding(
             padding: EdgeInsets.all(4.w),
             sliver: SliverToBoxAdapter(
@@ -97,24 +118,31 @@ class _SelfProfilePageState extends State<SelfProfilePage> {
             ),
           ),
           SliverAppBar(
+            expandedHeight: 0.w,
             backgroundColor: Theme.of(context).colorScheme.background,
             pinned: true,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: (){
+                    changePage(0);
+                  },
                   icon: Icon(
                     size: 8.w,
                     Icons.save,
                   ),
+                  color: _currentPage == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: (){
+                    changePage(1);
+                  },
                   icon: Icon(
                     size: 8.w,
                     Icons.bookmark,
                   ),
+                  color: _currentPage == 1 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
                 ),
               ],
             ),
@@ -126,32 +154,63 @@ class _SelfProfilePageState extends State<SelfProfilePage> {
               color: Colors.white,
             ),
           ),
-          SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 2.w,
-              mainAxisSpacing: 2.w,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Container(
-                  width: 30.w,
-                  height: 30.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.w),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage("assets/story/story.jpg"),
-                    ),
-                  ),
-                );
-              },
-              childCount: 20,
-            ),
-          ),
+          _currentPage == 0 ?
+          buildPostedPage(context):
+          buildBookmarkPage(context),
         ],
       )
-
     );
+  }
+
+  Widget buildBookmarkPage(BuildContext context){
+    return
+      SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return Container(
+              margin: EdgeInsets.all(1.w),
+              width: 30.w,
+              height: 30.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2.5.w),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage("assets/story/story.jpg"),
+                ),
+              ),
+            );
+          },
+          childCount: 20,
+        ),
+      );
+  }
+
+  buildPostedPage(BuildContext context){
+    return 
+      SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return Container(
+              margin: EdgeInsets.all(1.w),
+              width: 30.w,
+              height: 30.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2.5.w),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage("assets/story/story.jpg"),
+                ),
+              ),
+            );
+          },
+          childCount: 20,
+        ),
+      );
   }
 }

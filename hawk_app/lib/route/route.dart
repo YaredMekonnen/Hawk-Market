@@ -1,29 +1,38 @@
+import "package:hawk_app/auth/blocs/auth_cubit/auth_cubit.dart";
 import "package:hawk_app/auth/pages/index.dart";
 import "package:hawk_app/chat/pages/index.dart";
-import 'package:hawk_app/create_post/pages/create_post_page.dart';
+import "package:hawk_app/commons/utils/go_router_refresh_stream.dart";
+import 'package:hawk_app/create_product/pages/create_product_page.dart';
 import "package:hawk_app/home/pages/index.dart";
 import "package:hawk_app/profile/pages/index.dart";
 
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
-import "package:hawk_app/theme/theme.dart";
 
 class AppRouter extends StatelessWidget {
 
 
   static GlobalKey<NavigatorState> parentKey = GlobalKey<NavigatorState>();
   static GlobalKey<NavigatorState> homeKey = GlobalKey<NavigatorState>();
-  static GlobalKey<NavigatorState> profileKey = GlobalKey<NavigatorState>();
-  static GlobalKey<NavigatorState> createPostKey = GlobalKey<NavigatorState>();
-  static GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  // static GlobalKey<NavigatorState> itemListKey = GlobalKey<NavigatorState>();
+  // static GlobalKey<NavigatorState> profileKey = GlobalKey<NavigatorState>();
+  // static GlobalKey<NavigatorState> createPostKey = GlobalKey<NavigatorState>();
+  // static GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static final GoRouter router = GoRouter(
-        navigatorKey: parentKey,
+  late GoRouter router;
+
+  AppRouter(AuthCubit authCubit){
+    router = getRouter(authCubit);
+  }
+
+  GoRouter getRouter(AuthCubit authCubit){
+    return GoRouter(
         initialLocation: "/",
+        navigatorKey: parentKey,
         routes: <RouteBase>[
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) {
-              return HomePage(child: navigationShell, scaffoldKey: scaffoldKey,);
+              return HomePage(child: navigationShell);
             },
             branches: <StatefulShellBranch>[
               StatefulShellBranch(
@@ -32,7 +41,7 @@ class AppRouter extends StatelessWidget {
                   GoRoute(
                     path: "/",
                     builder: (context, state) {
-                      return ItemListPage(scaffoldKey: scaffoldKey);
+                      return ItemListPage();
                     },
                     routes: <RouteBase>[
                       GoRoute(
@@ -64,18 +73,16 @@ class AppRouter extends StatelessWidget {
                 ]
               ),
               StatefulShellBranch(
-                navigatorKey: createPostKey,
                 routes: [
                   GoRoute(
                     path: "/create-post",
                     builder: (context, state) {
-                      return CreatePostPage();
+                      return CreateProductPage();
                     }
                   ),
                 ]
               ),
               StatefulShellBranch(
-                navigatorKey: profileKey,
                 routes: [
                   GoRoute(
                     path: "/account",
@@ -88,27 +95,58 @@ class AppRouter extends StatelessWidget {
             ]
           ),
           GoRoute(
+            path: '/verify-otp',
+            builder: (context, state) {
+              return OtpPage();
+            },
+          ),
+          GoRoute(
+            path: '/forgot-password',
+            builder: (context, state) {
+              return ForgotPasswordPage();
+            },
+          ),
+          GoRoute(
+            path: '/reset-password',
+            builder: (context, state) {
+              return ResetPasswordPage();
+            },
+          ),
+          GoRoute(
             path: '/login',
             builder: (context, state) {
               return SignInPage();
             },
           ),
-           GoRoute(
+          GoRoute(
             path: '/signup',
             builder: (context, state) {
               return SignUpPage();
             },
           )
         ],
+        redirect: (context, state) {
+          final loggedIn = authCubit.state is Authenticated;
+          final loggingIn = state.fullPath == '/login';
+          final authPages = ['/login', '/signup', '/forgot-password', '/reset-password', '/verify-otp'];
+
+          if (!loggedIn && !authPages.contains(state.fullPath)) {
+            return '/login';
+          }
+
+          if (loggedIn && loggingIn){
+            return '/';
+          }
+
+          return null;
+        },
+        refreshListenable: GoRouterRefreshStream(authCubit.stream),
       );
+  }
 
   @override
   Widget build(BuildContext context){
-    return MaterialApp.router(
-      title: "Hawk",
-      theme: ThemeClass.lightTheme,
-      routerConfig: router
-    );
+    return Container();
   }
 
 }
