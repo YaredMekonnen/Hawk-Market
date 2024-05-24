@@ -10,15 +10,9 @@ export class CreateProductDto {
   description: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
   price: number;
 
   @IsNotEmpty()
   @IsString()
   tags: string;
-
-  @IsNotEmpty()
-  @IsString()
-  owner: string;
 }

@@ -14,9 +14,10 @@ import {
 import { ProductService } from '../service/product.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
-import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { User as UserEntity } from 'src/user/entity/user.entity';
+import { User } from 'src/auth/decorators/user.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('product')
@@ -25,8 +26,12 @@ export class ProductController {
 
   @Post()
   @UseInterceptors(FilesInterceptor('images', 5))
-  create(@UploadedFiles() images: Express.Multer.File[], @Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto, images);
+  create(
+    @User() user: UserEntity, 
+    @UploadedFiles() images: Express.Multer.File[], 
+    @Body() createProductDto: CreateProductDto
+  ) {
+    return this.productService.create(user.id, createProductDto, images);
   }
 
   @Get()
@@ -35,8 +40,8 @@ export class ProductController {
   }
 
   @Get('posted/:userId')
-  findPosted(@Param('userId') userId: string, @Query('page') page: number, @Query('limit') limit: number, @Query('search') search: string = ''){
-    return this.productService.getPosted(userId, page, limit, search);
+  findPosted(@User() user: UserEntity, @Query('page') page: number, @Query('limit') limit: number, @Query('search') search: string = ''){
+    return this.productService.getPosted(user.id, page, limit, search);
   }
 
   @Get(':id')
