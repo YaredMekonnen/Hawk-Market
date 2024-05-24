@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
-import { Message } from './schema/message.shema';
+import { MessageDocument } from './schema/message.shema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { IMessage } from './interface/message.interface';
+import { Message } from './entity/message.entity';
 
 @Injectable()
 export class MessageService {
 
   constructor(
-    @InjectModel(Message.name) private messageModel: Model<IMessage>,
+    @InjectModel(MessageDocument.name) private messageModel: Model<MessageDocument>,
   ) {}
 
   async create(createMessageDto: CreateMessageDto) {

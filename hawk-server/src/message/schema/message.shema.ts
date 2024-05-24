@@ -1,17 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { MESSAGE_TYPE } from '../enum/message-type.enum';
+import { Types, Document } from 'mongoose';
 
 @Schema({
+  collection: "messages",
   timestamps: true,
+  versionKey: false
 })
-export class Message {
-  @Prop({ required: true })
-  content: string;
+export class MessageDocument extends Document {
+  @Prop({ type: String, required: false, default: '' })
+  image: string;
 
-  @Prop({ required: true })
-  senderId: string;
+  @Prop({ type: String, required: false, default: '' })
+  text: string;
 
-  @Prop({ required: true })
-  chatId: string;
+  @Prop({ type: String, enum : MESSAGE_TYPE, required: true, default: 'text' })
+  type: string;
+
+  @Prop({ type: Types.ObjectId, required: true })
+  senderId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, required: true })
+  chatId: Types.ObjectId;
 }
 
-export const MessageSchema = SchemaFactory.createForClass(Message);
+export const MessageSchema = SchemaFactory.createForClass(MessageDocument);
