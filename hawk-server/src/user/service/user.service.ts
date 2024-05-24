@@ -7,41 +7,43 @@ import {
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../schema/user.schema';
+import { UserDocument } from '../schema/user.schema';
 import { Model, Types } from 'mongoose';
-import { IUser } from '../interface/user.interface';
+import { User } from '../entity/user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { Product } from 'src/product/schema/product.schema';
 import { hashPassword } from 'src/utils/auth/password_utils';
+import { Product } from 'src/product/entity/product.entity';
+import { ProductService } from 'src/product/service/product.service';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(UserDocument.name) private userModel: Model<UserDocument>,
     private readonly cloundinaryService: CloudinaryService,
+    private readonly productService: ProductService,
 ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const createdUser = await this.userModel.create({
+    const createdUserDoc = await this.userModel.create({
       ...createUserDto,
       password: await hashPassword(createUserDto.password)
     });
 
-    if (!createdUser) {
+    if (!createdUserDoc) {
       throw new InternalServerErrorException('Something Wrong');
     }
 
-    return createdUser;
+    return User.fromDocument(createdUserDoc);
   }
 
   async findAll(): Promise<User[]> {
-    const  users = await this.userModel.find();
+    const  userDocs = await this.userModel.find();
 
-    if (!users) {
+    if (!userDocs) {
       throw new NotFoundException('No User Found');
     }
 
-    return users;
+    return User.fromDocuments(userDocs);
   }
 
   async findOne(id: string): Promise<User> {
@@ -52,19 +54,19 @@ export class UserService {
       throw new NotFoundException('User Not Found');
     }
 
-    return user;
+    return User.fromDocument(user);
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
-    const user = await this.userModel.findOne({
+  async findOneByEmail(email: string): Promise<UserDocument | null> {
+    const userDoc = await this.userModel.findOne({
       email,
     });
 
-    if (!user) {
+    if (!userDoc) {
       throw new NotFoundException('User Not Found');
     }
 
-    return user;
+    return userDoc;
   }
 
   async update(id: string, profilePhoto: Express.Multer.File = null, updateUserDto: UpdateUserDto): Promise<User> {
@@ -85,17 +87,17 @@ export class UserService {
       throw new NotFoundException('User Not Found');
     }
 
-    return updatedUser;
+    return User.fromDocument(updatedUser);
   }
 
-  async remove(id: string): Promise<IUser> {
+  async remove(id: string): Promise<User> {
     const user = await this.userModel.findByIdAndDelete(id);
 
     if (!user) {
       throw new NotFoundException('User Not Found');
     }
 
-    return user;
+    return User.fromDocument(user);
   }
 
   async checkUser(email: string): Promise<boolean> {
@@ -110,7 +112,7 @@ export class UserService {
   }
 
   async checkUserPassword(email: string, password: string): Promise<boolean> {
-    let user: IUser;
+    let user: User;
 
     try {
       user = await this.userModel.findOne({
@@ -128,14 +130,7 @@ export class UserService {
   }
 
   async bookmark(productId: string, userId: string): Promise<User> {
-    let user: User;
-    try {
-      user = await this.userModel.findById({
-        userId
-      });
-    } catch (err) {
-      throw new BadRequestException('Something Went wrong');
-    }
+    let user = await this.userModel.findById(userId);
 
     if (!user) {
       throw new NotFoundException('User Not Found');
@@ -145,7 +140,7 @@ export class UserService {
     const isBookmarked = user.bookmarks.find((bookmark) => bookmark.toString() === productId);
 
     if (isBookmarked) {
-      const updatedUser = this.userModel.findByIdAndUpdate(userId, {
+      const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
           $pull: {
             bookmarks: new Types.ObjectId(productId)
           }
@@ -157,7 +152,7 @@ export class UserService {
         throw new BadRequestException('Something Went wrong');
       }
 
-      return updatedUser;
+      return User.fromDocument(updatedUser);
     } else {
 
       const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
@@ -168,17 +163,13 @@ export class UserService {
         { new: true }
       );
 
-      return updatedUser;
+      return User.fromDocument(updatedUser);
     }
   }
 
   async findBookmark(userId: string): Promise<Product[]> {
-    let user: User;
-    try {
-      user = await this.userModel.findById(userId).populate('bookmarks');
-      return user.bookmarks;
-    } catch (err) {
-      throw new BadRequestException('Something Went wrong');
-    }
+    let user = await this.userModel.findById(userId);
+    
+    return this.productService.findMany(user.bookmarks);
   }
 }

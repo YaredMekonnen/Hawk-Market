@@ -1,12 +1,16 @@
 import { Prop, Schema, SchemaFactory, } from '@nestjs/mongoose';
-import mongoose, { Types, Document } from 'mongoose';
-import { Product, ProductSchema } from 'src/product/schema/product.schema';
+import { Types, Document } from 'mongoose';
+import { ProductDocument, ProductSchema } from 'src/product/schema/product.schema';
 import { Otp } from '../types/otp.type';
 
 @Schema({
+  collection: "users",
   timestamps: true,
+  versionKey: false,
 })
-class User extends Document {
+export class UserDocument extends Document {
+  _id: Types.ObjectId;
+
   @Prop({ required: true })
   firstName: string;
 
@@ -25,16 +29,12 @@ class User extends Document {
   @Prop({ default: '' })
   bio: string;
 
-  @Prop({ type: [Types.ObjectId], ref: Product.name, default: []})
-  bookmarks: Product[];
+  @Prop({ type: [Types.ObjectId], default: []})
+  bookmarks: Types.ObjectId[];
 
   @Prop({ type: Otp, default: null })
   otp: Otp;
 }
 
 
-const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.index({ email: 1 });
-
-export { UserSchema, User };
+export const UserSchema = SchemaFactory.createForClass(UserDocument);
