@@ -1,16 +1,15 @@
 import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UserService } from 'src/user/service/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { IUser } from 'src/user/interface/user.interface';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { LoginPayload } from '../interface/login-payload.interface';
 import { comparePassword, hashPassword } from 'src/utils/auth/password_utils';
 
 import * as otpGenerator from 'otp-generator';
-import { Otp } from 'src/user/types/otp.type';
 import { VerifyOtpDto } from '../dto/verify-otp.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { sendOtp } from 'src/utils/auth/otp-sender';
+import { User } from 'src/user/entity/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -35,10 +34,10 @@ export class AuthService {
     return user;
   }
 
-  async login(user: IUser) {
+  async login(user: User) {
     const token = this.jwtService.sign({
         email: user.email,
-        userId: user._id.toString(),
+        userId: user.id.toString(),
       });
 
     return {
@@ -77,7 +76,7 @@ export class AuthService {
 
     await sendOtp(user.email, otp);
 
-    await this.usersService.update(user._id, null, { 
+    await this.usersService.update(user._id.toString(), null, { 
       otp: {
         otp: await hashPassword(otp),
         expiry: new Date(Date.now() + 240000),
@@ -105,7 +104,7 @@ export class AuthService {
       throw new BadRequestException('Invalid OTP');
     }
 
-    await this.usersService.update(user._id, null, { 
+    await this.usersService.update(user._id.toString(), null, { 
       otp: {
         otp: user.otp.otp,
         expiry: user.otp.expiry,
@@ -137,7 +136,7 @@ export class AuthService {
       throw new BadRequestException('Invalid OTP');
     }
 
-    await this.usersService.update(user._id, null, { 
+    await this.usersService.update(user._id.toString(), null, { 
       password: await hashPassword(resetPasswordDto.password),
       otp: {
         otp: '',

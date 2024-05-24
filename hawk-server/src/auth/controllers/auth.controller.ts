@@ -13,9 +13,9 @@ import { LoginDto } from '../dto/Login.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { User } from '../decorators/user.decorator';
-import { IUser } from 'src/user/interface/user.interface';
 import { VerifyOtpDto } from '../dto/verify-otp.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
+import { User as UserEntity } from 'src/user/entity/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +23,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@User() user: IUser) {
+  login(@User() user: UserEntity) {
     return this.authService.login(user);
   }
 
