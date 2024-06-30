@@ -5,17 +5,17 @@ import 'package:meta/meta.dart';
 
 import 'package:hawk_app/create_product/models/product.dart';
 
-part 'product_list_event.dart';
-part 'product_list_state.dart';
+part 'search_product_event.dart';
+part 'search_product_state.dart';
 
-class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
+class SearchProductBloc extends Bloc<SearchProductEvent, SearchProductState> {
   final ProductRepository _productRepository;
-  ProductListBloc(this._productRepository) : super(ProductListInitial()) {
-    on<ProductListLoad>((event, emit) async {
-      emit(ProductListLoading());
+  SearchProductBloc(this._productRepository) : super(SearchProductInitial()) {
+    on<SearchProductLoad>((event, emit) async {
+      emit(SearchProductLoading());
 
       final Result result = await _productRepository.getProducts(
-          skip: event.skip, limit: event.limit);
+          skip: event.skip, limit: event.limit, search: event.search);
 
       if (result is Success) {
         var products = result.value['data']
@@ -24,18 +24,17 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
             })
             .toList()
             .cast<Product>();
-        emit(ProductListLoaded(products));
+        emit(SearchProductLoaded(products));
       } else {
-        emit(ProductListError());
+        emit(SearchProductError());
       }
     });
 
-    on<LoadMoreProducts>((event, emit) async {
-      if (state is ProductListLoading || state is MoreProductListLoading) {
+    on<SearchMoreProducts>((event, emit) async {
+      if (state is SearchProductLoading || state is SearchMoreProductLoading)
         return;
-      }
-      emit(MoreProductListLoading());
 
+      emit(SearchMoreProductLoading());
       final Result result = await _productRepository.getProducts(
           skip: event.skip, limit: event.limit);
 
@@ -46,18 +45,9 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
             })
             .toList()
             .cast<Product>();
-        emit(MoreProductListLoaded(products));
+        emit(SearchMoreProductLoaded(products));
       } else {
-        emit(MoreProductListError());
-      }
-    });
-
-    on<DeleteProduct>((event, emit) async {
-      final Result result =
-          await _productRepository.deleteProduct(productId: event.id);
-
-      if (result is Success) {
-        add(ProductListLoad(0, 10));
+        emit(SearchMoreProductError());
       }
     });
   }

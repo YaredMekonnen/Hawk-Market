@@ -4,11 +4,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:hawk_app/commons/widgets/sidebar.dart';
 
 class HomePage extends StatefulWidget {
-  
   HomePage({
     super.key,
+    required this.scaffoldKey,
     required this.child,
   });
+
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   final StatefulNavigationShell child;
   @override
@@ -16,25 +18,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
   int _selectedIndex = 0;
   void _onItemTapped(BuildContext context, int index) {
     setState(() {
       _selectedIndex = index;
     });
-    widget.child.goBranch(
-      index,
-      initialLocation: index == widget.child.currentIndex
-    );
+    widget.child
+        .goBranch(index, initialLocation: index == widget.child.currentIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Sidebar(),
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
+        key: widget.scaffoldKey,
+        drawer: Sidebar(),
+        body: Stack(alignment: Alignment.bottomCenter, children: [
           //this is the shells branches
           widget.child,
 
@@ -46,7 +44,7 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background,
               border: Border.all(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.secondary,
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(7.5.w),
@@ -55,27 +53,31 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 IconButton(
-                  color: _selectedIndex == 0 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+                  color: _selectedIndex == 0
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
                   icon: Icon(
                     Icons.home,
                   ),
                   onPressed: () => _onItemTapped(context, 0),
                 ),
                 IconButton(
-                  color: _selectedIndex == 1 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+                  color: _selectedIndex == 1
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
                   icon: Icon(Icons.add_circle_outline),
                   onPressed: () => _onItemTapped(context, 1),
                 ),
                 IconButton(
-                  color: _selectedIndex == 2 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
-                  icon: Icon(Icons.account_circle_outlined),
+                  color: _selectedIndex == 2
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
+                  icon: Icon(Icons.account_circle),
                   onPressed: () => _onItemTapped(context, 2),
                 ),
               ],
             ),
           )
-        ]
-      )
-    );
+        ]));
   }
 }
