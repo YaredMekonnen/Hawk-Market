@@ -1,24 +1,26 @@
+import 'package:flutter/widgets.dart';
+
+@immutable
 class User {
   final String id;
-  final String firstName;
-  final String lastName;
+  final String username;
+  final String email;
   final String bio;
   final String profileUrl;
 
-  User({
+  const User({
     required this.id,
-    required this.firstName,
-    required this.lastName,
+    required this.username,
+    required this.email,
     required this.bio,
     required this.profileUrl,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    
     return User(
-      id: json['_id'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
       bio: json['bio'],
       profileUrl: json['profileUrl'],
     );

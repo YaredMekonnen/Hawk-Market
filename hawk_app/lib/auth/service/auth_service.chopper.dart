@@ -33,15 +33,54 @@ final class _$AuthChopperService extends AuthChopperService {
   }
 
   @override
-  Future<Response<Result<Map<String, dynamic>>>> registerUser(
-      Map<String, dynamic> data) {
+  Future<Response<Result<Map<String, dynamic>>>> getUser() {
+    final Uri $url = Uri.parse('/auth/user');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client
+        .send<Result<Map<String, dynamic>>, Map<String, dynamic>>($request);
+  }
+
+  @override
+  Future<Response<Result<Map<String, dynamic>>>> registerUser({
+    required String email,
+    required String password,
+    required String username,
+    MultipartFile? image,
+  }) {
     final Uri $url = Uri.parse('/auth/register');
-    final $body = data;
+    final Map<String, String> $headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'multipart/form-data',
+    };
+    final List<PartValue> $parts = <PartValue>[
+      PartValue<String>(
+        'email',
+        email,
+      ),
+      PartValue<String>(
+        'password',
+        password,
+      ),
+      PartValue<String>(
+        'username',
+        username,
+      ),
+      PartValueFile<MultipartFile?>(
+        'image',
+        image,
+      ),
+    ];
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
-      body: $body,
+      parts: $parts,
+      multipart: true,
+      headers: $headers,
     );
     return client
         .send<Result<Map<String, dynamic>>, Map<String, dynamic>>($request);

@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:chopper/chopper.dart';
 import 'package:hawk_app/auth/repository/auth.repository.dart';
 import 'package:hawk_app/commons/utils/response.dart';
 import 'package:meta/meta.dart';
@@ -7,32 +6,34 @@ import 'package:meta/meta.dart';
 part 'forgot_password_event.dart';
 part 'forgot_password_state.dart';
 
-class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
-
+class ForgotPasswordBloc
+    extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
   final AuthRepository repository;
-  late String email;
+  late String email = 'leulabay1@gmail.com';
   late String otp;
 
   ForgotPasswordBloc(this.repository) : super(ForgotPasswordIntial()) {
     on<ForgotPassword>(handleForgotPassword);
+    on<VerifyOtp>(handleVerifyOtp);
+    on<ResetPassword>(handleResetPassword);
   }
 
-  handleForgotPassword( ForgotPassword event, emit) async {
+  handleForgotPassword(ForgotPassword event, emit) async {
     emit(ForgotPasswordLoading());
 
-    final Result result = await repository.forgotPassword({
-      "email": event.email
-    });
+    final Result result =
+        await repository.forgotPassword({"email": event.email});
 
-    if (result is Success){
+    if (result is Success) {
       email = event.email;
-      emit(ForgotPasswordSuccess(message: "An OTP has been sent to your email."));
-    } else{
+      emit(ForgotPasswordSuccess(
+          message: "An OTP has been sent to your email."));
+    } else {
       emit(ForgotPasswordFailed(message: "Faild to intialize reset process"));
     }
   }
 
-  handleVerifyOt(VerifyOtp event, emit) async {
+  handleVerifyOtp(VerifyOtp event, emit) async {
     emit(VerifyOtpLoading());
 
     final Result result = await repository.verifyOtp({
