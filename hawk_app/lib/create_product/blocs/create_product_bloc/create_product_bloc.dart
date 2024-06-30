@@ -9,31 +9,43 @@ part 'create_product_event.dart';
 part 'create_product_state.dart';
 
 class CreateProductBloc extends Bloc<CreateProductEvent, CreateProductState> {
-
   ProductRepository productRepository;
+
+  var tags = '';
+  var name = '';
+  var description = '';
+  late num price;
+  late List<XFile> images;
 
   CreateProductBloc(this.productRepository) : super(CreateProductInitial()) {
     on<CreateProductEvent>((event, emit) {
       // TODO: implement event handler
     });
 
-    on<CreateProduct> ((event, emit) async {
+    on<SaveProduct>((event, emit) {
+      tags = event.tags;
+      name = event.name;
+      description = event.description;
+      price = event.price;
+      images = event.images;
+    });
+
+    on<CreateProduct>((event, emit) async {
       emit(CreateProductLoading());
 
-      final Result result = await this.productRepository.createProduct(
-        tags: event.tags,
-        name: event.name,
-        description: event.description,
-        price: event.price,
-        images: event.images
-      );
+      final Result result = await productRepository.createProduct(
+          tags: tags,
+          name: name,
+          description: description,
+          price: price,
+          images: images);
 
       if (result is Success) {
-        emit(CreateProductSuccess(Product.fromJson(result.value as Map<String, dynamic>)));
+        emit(CreateProductSuccess(
+            Product.fromJson(result.value['data'] as Map<String, dynamic>)));
       } else {
         emit(CreateProductFailure());
       }
-
     });
   }
 }

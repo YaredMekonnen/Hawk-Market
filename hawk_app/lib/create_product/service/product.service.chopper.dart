@@ -66,13 +66,13 @@ final class _$ProductChooperService extends ProductChooperService {
 
   @override
   Future<Response<Result<Map<String, dynamic>>>> getProducts({
-    int? page,
+    int? skip,
     int? limit,
     String? search,
   }) {
     final Uri $url = Uri.parse('/product');
     final Map<String, dynamic> $params = <String, dynamic>{
-      'page': page,
+      'skip': skip,
       'limit': limit,
       'search': search,
     };
@@ -89,12 +89,12 @@ final class _$ProductChooperService extends ProductChooperService {
   @override
   Future<Response<Result<Map<String, dynamic>>>> getPostedProducts({
     required String userId,
-    int? page,
+    int? skip,
     int? limit,
   }) {
-    final Uri $url = Uri.parse('/productposted/${userId}');
+    final Uri $url = Uri.parse('/product/posted/${userId}');
     final Map<String, dynamic> $params = <String, dynamic>{
-      'page': page,
+      'skip': skip,
       'limit': limit,
     };
     final Request $request = Request(
@@ -109,7 +109,7 @@ final class _$ProductChooperService extends ProductChooperService {
 
   @override
   Future<Response<Result<Map<String, dynamic>>>> getProduct(String id) {
-    final Uri $url = Uri.parse('/product');
+    final Uri $url = Uri.parse('/product/${id}');
     final Request $request = Request(
       'GET',
       $url,
@@ -121,7 +121,7 @@ final class _$ProductChooperService extends ProductChooperService {
 
   @override
   Future<Response<Result<Map<String, dynamic>>>> deleteProduct(String id) {
-    final Uri $url = Uri.parse('/product');
+    final Uri $url = Uri.parse('/product/${id}');
     final Request $request = Request(
       'DELETE',
       $url,
