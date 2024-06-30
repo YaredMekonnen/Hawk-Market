@@ -51,5 +51,15 @@
 	<string>This app needs to access devices camera</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs to access the devices microphone</string>
+	<key>NSAppTransportSecurity</key>
+	<key>NSCameraUsageDescription</key>
+	<string>Scan your card to add it automatically</string>
+	<key>NSCameraUsageDescription
+	&lt;string&gt;To scan cards&lt;/string&gt;</key>
+	<string>To scan cards</string>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+			<true/>
+	</dict>
 </dict>
 </plist>
