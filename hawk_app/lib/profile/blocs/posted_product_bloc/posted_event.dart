@@ -5,8 +5,8 @@ sealed class PostedEvent {}
 
 final class LoadPosted extends PostedEvent {
   final String userId;
-  final int page;
+  final int skip;
   final int limit;
 
-  LoadPosted(this.userId, this.page, this.limit);
+  LoadPosted(this.userId, this.skip, this.limit);
 }

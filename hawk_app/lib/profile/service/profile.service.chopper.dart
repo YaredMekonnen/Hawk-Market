@@ -20,10 +20,9 @@ final class _$ProfileChooperService extends ProfileChooperService {
   @override
   Future<Response<Result<Map<String, dynamic>>>> bookmark({
     required String productId,
-    required String userId,
     required Map<String, dynamic> body,
   }) {
-    final Uri $url = Uri.parse('/profilebookmark/${productId}/${userId}');
+    final Uri $url = Uri.parse('/profile/bookmark/${productId}');
     final $body = body;
     final Request $request = Request(
       'POST',
@@ -38,10 +37,9 @@ final class _$ProfileChooperService extends ProfileChooperService {
   @override
   Future<Response<Result<Map<String, dynamic>>>> updateProfile({
     required String id,
-    required String firstName,
-    required String lastName,
+    required String username,
     required String bio,
-    required MultipartFile? image,
+    MultipartFile? image,
   }) {
     final Uri $url = Uri.parse('/profile/${id}');
     final Map<String, String> $headers = {
@@ -50,12 +48,8 @@ final class _$ProfileChooperService extends ProfileChooperService {
     };
     final List<PartValue> $parts = <PartValue>[
       PartValue<String>(
-        'firstName',
-        firstName,
-      ),
-      PartValue<String>(
-        'lastName',
-        lastName,
+        'username',
+        username,
       ),
       PartValue<String>(
         'bio',
@@ -67,7 +61,7 @@ final class _$ProfileChooperService extends ProfileChooperService {
       ),
     ];
     final Request $request = Request(
-      'PUT',
+      'PATCH',
       $url,
       client.baseUrl,
       parts: $parts,
@@ -81,12 +75,12 @@ final class _$ProfileChooperService extends ProfileChooperService {
   @override
   Future<Response<Result<Map<String, dynamic>>>> getBookmarks({
     required String userId,
-    int? page,
+    int? skip,
     int? limit,
   }) {
     final Uri $url = Uri.parse('/profile/bookmark/${userId}');
     final Map<String, dynamic> $params = <String, dynamic>{
-      'page': page,
+      'skip': skip,
       'limit': limit,
     };
     final Request $request = Request(
@@ -101,7 +95,7 @@ final class _$ProfileChooperService extends ProfileChooperService {
 
   @override
   Future<Response<Result<Map<String, dynamic>>>> getProfile(String id) {
-    final Uri $url = Uri.parse('/profile');
+    final Uri $url = Uri.parse('/profile/${id}');
     final Request $request = Request(
       'GET',
       $url,
@@ -113,7 +107,7 @@ final class _$ProfileChooperService extends ProfileChooperService {
 
   @override
   Future<Response<Result<Map<String, dynamic>>>> deleteProfile(String id) {
-    final Uri $url = Uri.parse('/profile');
+    final Uri $url = Uri.parse('/profile/${id}');
     final Request $request = Request(
       'DELETE',
       $url,

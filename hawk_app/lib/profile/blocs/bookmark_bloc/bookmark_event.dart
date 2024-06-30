@@ -5,8 +5,14 @@ sealed class BookmarkEvent {}
 
 final class LoadBookmark extends BookmarkEvent {
   final String userId;
-  final int page;
+  final int skip;
   final int limit;
 
-  LoadBookmark(this.userId, this.page, this.limit);
+  LoadBookmark(this.userId, this.skip, this.limit);
+}
+
+final class BookmarkProduct extends BookmarkEvent {
+  final String productId;
+
+  BookmarkProduct(this.productId);
 }

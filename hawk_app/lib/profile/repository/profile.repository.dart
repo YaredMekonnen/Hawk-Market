@@ -10,75 +10,98 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 class ProfileRepository {
-
   ProfileRepository(this.ProfileService);
 
   final ProfileChooperService ProfileService;
 
+  Future<Result<Map<String, dynamic>>> getProfile({
+    required String userId,
+  }) async {
+    try {
+      final Response<Result<Map<String, dynamic>>> response =
+          await ProfileService.getProfile(
+        userId,
+      );
+      if (response.isSuccessful) {
+        return response.body as Result<Map<String, dynamic>>;
+      } else {
+        return Error(response.error as Map<String, dynamic>);
+      }
+    } catch (e) {
+      return Error({"message": "Unexpected Error"});
+    }
+  }
+
   Future<Result<Map<String, dynamic>>> updateProfile({
     required String id,
-    required String firstName,
-    required String lastName,
+    required String username,
     required String bio,
     XFile? image,
   }) async {
-
-    final MultipartFile? imageFile = image != null ? http.MultipartFile(
-        'image',
-        File(image.path).readAsBytes().asStream(),
-        File(image.path).lengthSync(),
-        filename: image.path.split('/').last,
-        contentType: MediaType.parse(
-          lookupMimeType(image.path) ?? '',
-        ),
-      ) :
-      null
-      ;
+    final MultipartFile? imageFile = image != null
+        ? http.MultipartFile(
+            'image',
+            File(image.path).readAsBytes().asStream(),
+            File(image.path).lengthSync(),
+            filename: image.path.split('/').last,
+            contentType: MediaType.parse(
+              lookupMimeType(image.path) ?? '',
+            ),
+          )
+        : null;
 
     try {
-      final Response<Result<Map<String, dynamic>>> response = await ProfileService.updateProfile(
+      final Response<Result<Map<String, dynamic>>> response =
+          await ProfileService.updateProfile(
         id: id,
-        firstName: firstName,
-        lastName: lastName,
+        username: username,
         bio: bio,
         image: imageFile,
       );
-      return response.body as Result<Map<String, dynamic>>;
-    } catch (e){
+      if (response.isSuccessful) {
+        return response.body as Result<Map<String, dynamic>>;
+      } else {
+        return Error(response.error as Map<String, dynamic>);
+      }
+    } catch (e) {
       return Error({"message": "Unexpected Error"});
     }
-    
   }
 
   Future<Result<Map<String, dynamic>>> bookmark({
-    required String userId,
     required String productId,
   }) async {
-    try{
-      final Response<Result<Map<String, dynamic>>> response = await ProfileService.bookmark(
-        userId: userId,
-        productId: productId,
-        body: {}
-      );
-      return response.body as Result<Map<String, dynamic>>;
-    } catch (e){
+    try {
+      final Response<Result<Map<String, dynamic>>> response =
+          await ProfileService.bookmark(productId: productId, body: {});
+      if (response.isSuccessful) {
+        return response.body as Result<Map<String, dynamic>>;
+      } else {
+        return Error(response.error as Map<String, dynamic>);
+      }
+    } catch (e) {
       return Error({"message": "Unexpected Error"});
     }
   }
 
   Future<Result<Map<String, dynamic>>> getBookmarks({
     required String userId,
-    int? page,
+    int? skip,
     int? limit,
   }) async {
-    try{
-      final Response<Result<Map<String, dynamic>>> response = await ProfileService.getBookmarks(
+    try {
+      final Response<Result<Map<String, dynamic>>> response =
+          await ProfileService.getBookmarks(
         userId: userId,
-        page: page,
+        skip: skip,
         limit: limit,
       );
-      return response.body as Result<Map<String, dynamic>>;
-    } catch (e){
+      if (response.isSuccessful) {
+        return response.body as Result<Map<String, dynamic>>;
+      } else {
+        return Error(response.error as Map<String, dynamic>);
+      }
+    } catch (e) {
       return Error({"message": "Unexpected Error"});
     }
   }

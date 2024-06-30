@@ -7,19 +7,18 @@ part 'profile.service.chopper.dart';
 
 @ChopperApi()
 abstract class ProfileChooperService extends ChopperService {
-
-  static ProfileChooperService create({ChopperClient? client}) => _$ProfileChooperService(client);
+  static ProfileChooperService create({ChopperClient? client}) =>
+      _$ProfileChooperService(client);
 
   @Post(
-    path: APIEndpoints.profile + 'bookmark/{productId}/{userId}',
+    path: '${APIEndpoints.profile}/bookmark/{productId}',
   )
   Future<Response<Result<Map<String, dynamic>>>> bookmark({
     @Path('productId') required String productId,
-    @Path('userId') required String userId,
     @Body() required Map<String, dynamic> body,
   });
 
-  @Put(
+  @Patch(
     path: APIEndpoints.profile + '/{id}',
     headers: {
       'Accept': 'application/json',
@@ -27,39 +26,33 @@ abstract class ProfileChooperService extends ChopperService {
     },
   )
   @Multipart()
-  Future<Response<Result<Map<String, dynamic>>>> updateProfile(
-    {
-      @Path('id') required String id,
-      @Part('firstName') required String firstName,
-      @Part('lastName') required String lastName,
-      @Part('bio') required String bio,
-      @PartFile('image') required MultipartFile? image,
-    }
-  );
+  Future<Response<Result<Map<String, dynamic>>>> updateProfile({
+    @Path('id') required String id,
+    @Part('username') required String username,
+    @Part('bio') required String bio,
+    @PartFile('image') MultipartFile? image,
+  });
 
   @Get(
-    path: APIEndpoints.profile + '/bookmark/{userId}',
+    path: '${APIEndpoints.profile}/bookmark/{userId}',
   )
-  Future<Response<Result<Map<String, dynamic>>>> getBookmarks(
-    {
-      @Path('userId') required String userId,
-      @Query('page') int? page,
-      @Query('limit') int? limit,
-    }
-  );
+  Future<Response<Result<Map<String, dynamic>>>> getBookmarks({
+    @Path('userId') required String userId,
+    @Query('skip') int? skip,
+    @Query('limit') int? limit,
+  });
 
   @Get(
-    path: APIEndpoints.profile,
+    path: '${APIEndpoints.profile}/{id}',
   )
   Future<Response<Result<Map<String, dynamic>>>> getProfile(
     @Path('id') String id,
   );
 
   @Delete(
-    path: APIEndpoints.profile,
+    path: '${APIEndpoints.profile}/{id}',
   )
   Future<Response<Result<Map<String, dynamic>>>> deleteProfile(
     @Path('id') String id,
   );
-  
 }
