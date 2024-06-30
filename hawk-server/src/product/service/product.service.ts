@@ -7,9 +7,11 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ProductDocument } from '../schema/product.schema';
-import { Model, Types } from 'mongoose';
+import { Model, Types, now } from 'mongoose';
 import { Product } from '../entity/product.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { Story } from '../entity/story.entity';
+import { User } from 'src/user/entity/user.entity';
 
 @Injectable()
 export class ProductService {
@@ -30,6 +32,10 @@ export class ProductService {
       throw new BadRequestException('Price must be a number');
     }
 
+    if (photos.length === 0) {
+      throw new BadRequestException('At least one photo is required');
+    }
+
     const uploadPromises = photos.map(async (photo) => {
       return this.cloundinaryService.upload(photo);
     })
@@ -46,30 +52,26 @@ export class ProductService {
     return Product.fromDocument(productDoc);
   }
 
-  async findAll(page: number, limit: number, search: string): Promise<{data: Product[]}> {
-
-    const skip = ((page || 1) - 1) * (limit || 10);
-
+  async findAll(skip: number, limit: number, search: string, user: User): Promise<Product[]> {
     const products = await this.productModel.find(
       search !== '' ? { name: { $regex: search, $options: 'i' } } : {}
-    ).skip(skip)
+    ).skip(skip || 0)
     .limit(limit || 10)
+    .sort({ createdAt: -1 })
     .populate('owner')
     .exec();
 
-    return {
-      data: Product.fromDocuments(products)
-    }
+    return Product.fromDocumentsWithBookmark(products, user)
   }
 
-  async findOne(id: string): Promise<Product> {
+  async findOne(id: string, user: User): Promise<Product> {
     const product = await this.productModel.findById(id).populate('owner');
 
     if (!product) {
       throw new NotFoundException('Product not found');
     }
 
-    return Product.fromDocument(product);
+    return Product.fromDocumentWithBookmark(product, user);
   }
 
   async update(
@@ -97,20 +99,16 @@ export class ProductService {
     return Product.fromDocument(deletedDoc);
   }
 
-  async getPosted(userId: string, page: number, limit: number, search: string): Promise<{data: Product[]}> {
-
-    const skip = ((page || 1) - 1) * (limit || 10);
+  async getPosted(userId: string, skip: number, limit: number, search: string): Promise<Product[]> {
 
     const products = await this.productModel.find(
       { owner: new Types.ObjectId(userId) }
-    ).skip(skip)
-    .limit(limit)
+    ).skip(skip || 0)
+    .limit(limit || 10)
     .populate('owner')
     .exec();
 
-    return {
-      data: Product.fromDocuments(products)
-    }
+    return Product.fromDocuments(products)
   }
 
   async findMany(ids: Types.ObjectId[]): Promise<Product[]> {
@@ -119,5 +117,65 @@ export class ProductService {
     }).populate('owner').exec();
 
     return Product.fromDocuments(products);
+  }
+
+  async createStory(id: string){
+    const updatedProduct = await this.productModel
+      .findByIdAndUpdate(id, {
+        story: true,
+        storyDate: now()
+      })
+      .populate('owner');
+
+    if (!updatedProduct)
+      throw new NotFoundException("Post not found");
+    
+
+    return Story.fromDocument(updatedProduct);
+  }
+
+  async findAllStory(skip: number, limit: number): Promise<Story[]> {
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+
+    const products = await this.productModel.find({
+      story: true,
+      storyDate: { $gte: twentyFourHoursAgo }
+    })
+    .skip(skip || 0)
+    .limit(limit || 10)
+    .sort({ storyDate: -1 })
+    .populate('owner')
+    .exec();
+
+    return Product.fromDocuments(products);
+  }
+
+  async findUserStories(userId: string, skip: number, limit: number): Promise<Story[]> {
+    const now = new Date();
+
+    const products = await this.productModel.find({
+      story: true,
+      owner: new Types.ObjectId(userId)
+    })
+    .skip(skip || 0)
+    .limit(limit || 10)
+    .populate('owner')
+    .exec();
+
+    return Product.fromDocuments(products);
+  }
+
+  async removeStory(id: string) {
+    const deletedData = this.productModel.findByIdAndUpdate(id,{
+      story: false
+    });
+
+    if(!deletedData)
+      throw new NotFoundException("Product not found")
+
+    return {
+      deleted: true
+    }
   }
 }

@@ -10,12 +10,14 @@ import { VerifyOtpDto } from '../dto/verify-otp.dto';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
 import { sendOtp } from 'src/utils/auth/otp-sender';
 import { User } from 'src/user/entity/user.entity';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UserService,
     private readonly jwtService: JwtService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async validateUser(payload: LoginPayload) {
@@ -37,22 +39,21 @@ export class AuthService {
   async login(user: User) {
     const token = this.jwtService.sign({
         email: user.email,
-        userId: user.id.toString(),
+        userId: user.id,
       });
 
-    return {
-      token
-    };
-
+    return token;
   }
 
-  async register(createUserDto: CreateUserDto) {
-
+  async register(createUserDto: CreateUserDto, image: Express.Multer.File) {
     const userExist = await this.usersService.checkUser(createUserDto.email);
 
     if (userExist) {
       throw new ConflictException('User Already Exist');
     }
+
+    const photoUrl = await this.cloudinaryService.upload(image);
+    createUserDto.profileUrl = photoUrl;
 
     const user = await this.usersService.create(createUserDto);
 

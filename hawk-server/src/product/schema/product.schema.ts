@@ -27,6 +27,16 @@ export class ProductDocument extends Document {
 
   @Prop({ type: Types.ObjectId, required: true, ref: UserDocument.name })
   owner: UserDocument;
+
+  @Prop({ required: true, default: Date.now })
+  storyDate: Date
+
+  @Prop({ default: false })
+  story: boolean
+
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
+
 }
 
 export const ProductSchema = SchemaFactory.createForClass(ProductDocument);
