@@ -8,6 +8,8 @@ import { Types, Document } from 'mongoose';
   versionKey: false
 })
 export class MessageDocument extends Document {
+  _id: Types.ObjectId;
+  
   @Prop({ type: String, required: false, default: '' })
   image: string;
 
@@ -22,6 +24,9 @@ export class MessageDocument extends Document {
 
   @Prop({ type: Types.ObjectId, required: true })
   chatId: Types.ObjectId;
+
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(MessageDocument);
