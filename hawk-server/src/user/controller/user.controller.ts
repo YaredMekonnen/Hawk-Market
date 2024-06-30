@@ -8,49 +8,70 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { RTO } from 'src/utils/models/response';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { User } from 'src/auth/decorators/user.decorator';
+import {User as UserEntity} from '../entity/user.entity';
 
 @Controller('profile')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const response = await this.userService.create(createUserDto);
+    return new RTO(true, response);
   }
 
-  @Post('bookmark/:productId/:userId')
-  bookmark(@Param('productId') productId: string, @Param('userId') userId: string){
-    return this.userService.bookmark(productId, userId);
+  @UseGuards(JwtAuthGuard)
+  @Post('bookmark/:productId')
+  async bookmark(
+    @Param('productId') productId: string, 
+    @User() user: UserEntity,
+  ){
+    const response = await this.userService.bookmark(productId, user.id);
+    return new RTO(true, response);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    const response = await this.userService.findAll();
+    return new RTO(true, response);
   }
 
   @Get('bookmark/:userId')
-  findBookmark(@Param('userId') userId: string){
-    return this.userService.findBookmark(userId);
+  async findBookmark(@Param('userId') userId: string){
+    const response = await this.userService.findBookmark(userId);
+    return new RTO(true, response);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const response = await this.userService.findOne(id);
+    return new RTO(true, response);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseInterceptors(FileInterceptor('image'))
-  update(@UploadedFile() image: Express.Multer.File, @Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, image, updateUserDto);
+  async update(
+    @UploadedFile() image: Express.Multer.File, 
+    @Param('id') id: string, 
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    const response = await this.userService.update(id, image, updateUserDto);
+    return new RTO(true, response);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(id);
+  async remove(@Param('id') id: string) {
+    const response = await this.userService.remove(id);
+    return new RTO(true, response);
   }
 }

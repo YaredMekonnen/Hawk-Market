@@ -3,19 +3,19 @@ import { UserDocument } from '../schema/user.schema';
 
 export class User {
   id: string;
-  firstName: string;
-  lastName: string;
+  username: string;
   email: string;
   profileUrl: string;
   bio: string;
+  bookmarks: string[];
 
   constructor(document: UserDocument) {
     this.id = document._id.toString(),
-    this.firstName = document.firstName,
-    this.lastName = document.lastName,
+    this.username = document.username,
     this.email = document.email,
     this.profileUrl = document.profileUrl,
     this.bio = document.bio
+    this.bookmarks = document.bookmarks.map((bookmark)=>bookmark.toString())
   };
 
   static fromDocument(document: UserDocument): User {

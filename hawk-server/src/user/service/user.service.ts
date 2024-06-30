@@ -70,7 +70,6 @@ export class UserService {
   }
 
   async update(id: string, profilePhoto: Express.Multer.File = null, updateUserDto: UpdateUserDto): Promise<User> {
-
     let profilePhotoUrl: string;
 
     if (profilePhoto){
@@ -167,7 +166,7 @@ export class UserService {
     }
   }
 
-  async findBookmark(userId: string): Promise<Product[]> {
+  async findBookmark(userId: string) {
     let user = await this.userModel.findById(userId);
     
     return this.productService.findMany(user.bookmarks);

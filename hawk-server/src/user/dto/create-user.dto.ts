@@ -13,23 +13,24 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(3)
   @MaxLength(30)
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @MinLength(3)
-  @MaxLength(30)
-  lastName: string;
+  username: string;
 
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
   @IsString()
+  @IsOptional()
+  bio: string;
+
+  @IsString()
   @IsNotEmpty()
   @MinLength(6)
   @MaxLength(30)
   password: string;
+
+  @IsOptional()
+  profileUrl: string;
 
   @IsOptional()
   otp: Otp;

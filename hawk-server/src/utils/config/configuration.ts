@@ -3,4 +3,5 @@ export default () => ({
     databaseUrl: `${process.env.DB_URL}/${process.env.DB_NAME}`,
     jwtSecretKey: process.env.JWT_SECRET,
     jwtExpirationTime: process.env.JWT_EXPIRATION_TIME,
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
   });
