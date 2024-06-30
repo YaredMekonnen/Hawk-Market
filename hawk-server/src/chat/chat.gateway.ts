@@ -1,71 +1,109 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { 
+  WebSocketGateway, 
+  SubscribeMessage,
+  MessageBody, 
+  WebSocketServer, 
+  ConnectedSocket 
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
+import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from './filters/websocket-exception.filter';
+import { ConnectedDto } from './dto/connected.dto';
+import { WEBSOCKET_EVENTS } from './events/event.enum';
+import { CreateTextMessageDto } from 'src/message/dto/create-text-message.dto';
+import { ReadMessageDto } from './dto/read-message.dto';
+import { WSValidationPipe } from './pipes/ws-validation.pipe';
+import { RTO } from 'src/utils/models/response';
 
+@UseFilters(new AllExceptionsFilter())
+@UsePipes(new WSValidationPipe())
 @WebSocketGateway()
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway {
 
   @WebSocketServer()
   server: Server;
 
   constructor(private readonly chatService: ChatService) {}
 
-  handleConnection(client: Socket) {
-    this.chatService
-    client.join
+  @SubscribeMessage(WEBSOCKET_EVENTS.CONNECTED)
+  onConnection(
+    @MessageBody() payload: ConnectedDto,
+    @ConnectedSocket() client: Socket
+  ) {
+    client.join(payload.userId);
   }
 
-  handleDisconnect(client: any) {
-    console.log(`Client disconnected: ${client.id}`);
+  @SubscribeMessage(WEBSOCKET_EVENTS.NEW_CHAT)
+  async createChat(@MessageBody() createChatDto: CreateChatDto) {
+    const chat = await this.chatService.create(createChatDto);
+
+    this.sendEventToRoom(
+      WEBSOCKET_EVENTS.UPDATE_CHAT, 
+      new RTO(true, chat),
+      chat.owners.find((owner)=>owner.id !== createChatDto.senderId).id
+    );
+
+    return new RTO(true, chat);
   }
 
-  @SubscribeMessage('createChat')
-  create(@MessageBody() createChatDto: CreateChatDto) {
-    this.server.emit("createChat", "This action adds a new chat" )
-    return "This action adds a new chat";
-    // return this.chatService.create(createChatDto);
+  @SubscribeMessage(WEBSOCKET_EVENTS.NEW_MESSAGES)
+  async sendImageMessage(@MessageBody() data: any) {
+    const chat = await this.chatService.findOne(data.chatId);
+
+    this.sendEventToRoom(
+      WEBSOCKET_EVENTS.NEW_MESSAGES,
+      new RTO(true, data.messages),
+      data.reciverId
+    );
+
+    this.sendEventToRooms(
+      WEBSOCKET_EVENTS.UPDATE_CHAT,
+      new RTO(true, chat),
+      chat.owners.map((owner)=>owner.id)
+    )
   }
 
-  @SubscribeMessage("joinChat")
-  async handleJoinChat(@ConnectedSocket() client: Socket, @MessageBody() payload: {chatId: string}){
-    const {chatId} = payload;
+  @SubscribeMessage(WEBSOCKET_EVENTS.NEW_MESSAGE)
+  async sendMessage(@MessageBody() payload: CreateTextMessageDto) {
+    const chat = await this.chatService.findOne(payload.chatId);
+    const otherOwner = chat.owners.find((owner)=>owner.id !== payload.senderId).id
+    const message = await this.chatService.createMessage(payload, otherOwner);
 
-    try{
-      client.join(chatId);
-    } catch(e){
-      this.server.to(chatId).emit("chatError", "Error on joing chat room");
-    }
+    const updatedChat = await this.chatService.findOne(message.chatId);
+
+    this.sendEventToRoom(
+      WEBSOCKET_EVENTS.NEW_MESSAGE,
+      new RTO(true, message),
+      chat.owners.find((owner)=>owner.id !== message.senderId).id
+    );
+
+    this.sendEventToRooms(
+      WEBSOCKET_EVENTS.UPDATE_CHAT,
+      new RTO(true, updatedChat),
+      chat.owners.map((owner)=>owner.id)
+    )
+
+    return new RTO(true, message);
   }
 
-  @SubscribeMessage("message")
-  async handleMessage(@ConnectedSocket() client: Socket, @MessageBody() payload: {chatId: string, message: string, senderId: string}): Promise<void> {
+  @SubscribeMessage(WEBSOCKET_EVENTS.READ_MESSAGE)
+  async readMessage(@MessageBody() payload: ReadMessageDto) {
+    const chat = await this.chatService.readMessage(payload.chatId, payload.userId);
 
-    const {chatId, message, senderId} = payload
-
-    const savedMessage = await this.chatService.saveMessage(chatId, message, senderId)
-
-    this.server.to(chatId).emit("message", savedMessage);
+    this.sendEventToRoom(
+      WEBSOCKET_EVENTS.UPDATE_CHAT,
+      new RTO(true, chat),
+      payload.userId
+    );
   }
 
-  @SubscribeMessage('findAllChat')
-  findAll() {
-    return this.chatService.findAll();
+  sendEventToRoom(event: WEBSOCKET_EVENTS, data: any, room: string){
+    this.server.to(room).emit(event, data);
   }
 
-  @SubscribeMessage('findOneChat')
-  findOne(@MessageBody() id: number) {
-    return this.chatService.findOne(id);
-  }
-
-  @SubscribeMessage('updateChat')
-  update(@MessageBody() updateChatDto: UpdateChatDto) {
-    return this.chatService.update(updateChatDto.id, updateChatDto);
-  }
-
-  @SubscribeMessage('removeChat')
-  remove(@MessageBody() id: number) {
-    return this.chatService.remove(id);
+  sendEventToRooms(event: WEBSOCKET_EVENTS, data: any, room: string[]){
+    this.server.to(room).emit(event, data);
   }
 }

@@ -9,6 +9,8 @@ import { UserDocument } from 'src/user/schema/user.schema';
   versionKey: false,
 })
 export class ChatDocument extends Document{
+  _id: Types.ObjectId;
+
   @Prop({ type: Object, default:{}})
   numberOfUnread: {}
 
