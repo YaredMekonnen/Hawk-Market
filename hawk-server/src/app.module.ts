@@ -9,6 +9,7 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { MessageModule } from './message/message.module';
 import { ChatModule } from './chat/chat.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PaymentModule } from './payment/payment.module';
 import Configuration from './utils/config/configuration';
 
 @Module({
@@ -29,8 +30,9 @@ import Configuration from './utils/config/configuration';
     AuthModule,
     MessageModule,
     ChatModule,
+    PaymentModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService],
+  providers: [AppService],
 })
 export class AppModule {}
