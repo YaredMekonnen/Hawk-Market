@@ -37,30 +37,22 @@ class SocketService {
           }));
     });
 
-    socket.onDisconnect((data) {
-      print("Disconnected");
-    });
+    socket.onDisconnect((data) {});
 
-    socket.onReconnect((data) {
-      print("Reconnected");
-    });
+    socket.onReconnect((data) {});
 
     socket.on(WebsocketEvent.update_chat.name, (data) {
       try {
         Chat chat = Chat.fromJson(data['data']);
         chatsBloc.add(UpdateChat(chat));
-      } catch (e) {
-        print(e.toString());
-      }
+      } catch (e) {}
     });
 
     socket.on(WebsocketEvent.new_message.name, (data) {
       try {
         Message message = Message.fromJson(data['data']);
         messagesBloc.add(UpdateMessages([message]));
-      } catch (e) {
-        print(e.toString());
-      }
+      } catch (e) {}
     });
 
     socket.on(WebsocketEvent.new_messages.name, (data) {
@@ -68,9 +60,7 @@ class SocketService {
         List<Message> messages =
             (data['data'] as List).map((e) => Message.fromJson(e)).toList();
         messagesBloc.add(UpdateMessages(messages));
-      } catch (e) {
-        print(e.toString());
-      }
+      } catch (e) {}
     });
   }
 

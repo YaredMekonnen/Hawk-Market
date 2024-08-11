@@ -9,6 +9,8 @@ import 'package:hawk_app/profile/blocs/bookmark_bloc/bookmark_bloc.dart';
 import 'package:hawk_app/profile/blocs/load_profile/load_profile_bloc.dart';
 import 'package:hawk_app/profile/blocs/load_user_story_bloc/load_user_story_bloc.dart';
 import 'package:hawk_app/profile/blocs/posted_product_bloc/posted_bloc.dart';
+import 'package:hawk_app/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class OtherProfilePage extends StatefulWidget {
@@ -42,172 +44,231 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-        body: CustomScrollView(
-      slivers: [
-        SliverAppBar(
-          floating: true,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          leading: IconButton(
-            icon: Icon(
-              size: 8.w,
-              Icons.arrow_back,
-              color: Theme.of(context).colorScheme.secondary,
+        body: RefreshIndicator(
+      onRefresh: () async {
+        context.read<LoadProfileBloc>().add(LoadProfile(widget.userId));
+        context
+            .read<LoadUserStoryBloc>()
+            .add(LoadUserStories(widget.userId, 0, 10));
+        context.read<BookmarkBloc>().add(LoadBookmark(widget.userId, 0, 10));
+        context.read<PostedBloc>().add(LoadPosted(widget.userId, 0, 10));
+      },
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            leading: IconButton(
+              icon: Icon(
+                size: 8.w,
+                Icons.arrow_back,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              onPressed: () {
+                GoRouter.of(context).go('/');
+              },
             ),
-            onPressed: () {
-              GoRouter.of(context).go('/');
-            },
           ),
-        ),
-        SliverPadding(
-          padding: EdgeInsets.all(4.w),
-          sliver: SliverToBoxAdapter(
-            child: BlocBuilder<LoadProfileBloc, LoadProfileState>(
-              builder: (context, state) {
-                if (state is ProfileLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is ProfileLoaded) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 30.w,
-                        height: 30.w,
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.w),
-                        ),
-                        child: state.user.profileUrl != ""
-                            ? CustomeNetworkImage(
-                                imageUrl: state.user.profileUrl)
-                            : Container(
-                                width: 30.w,
-                                height: 30.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5.w),
-                                  image: const DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image:
-                                        AssetImage('assets/avatar/profile.jpg'),
+          SliverPadding(
+            padding: EdgeInsets.all(4.w),
+            sliver: SliverToBoxAdapter(
+              child: BlocBuilder<LoadProfileBloc, LoadProfileState>(
+                builder: (context, state) {
+                  if (state is ProfileLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is ProfileLoaded) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 30.w,
+                          height: 30.w,
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.w),
+                          ),
+                          child: state.user.profileUrl != ""
+                              ? CustomeNetworkImage(
+                                  imageUrl: state.user.profileUrl)
+                              : Container(
+                                  width: 30.w,
+                                  height: 30.w,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.w),
+                                    image: const DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(
+                                          'assets/avatar/profile.jpg'),
+                                    ),
                                   ),
                                 ),
-                              ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        ),
+                        SizedBox(width: 4.w),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              state.user.username,
+                              style: Theme.of(context).textTheme.displayLarge,
+                            ),
+                            SizedBox(height: 4.w),
+                            Text(
+                              state.user.bio,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+                  return const Center(
+                    child: Text("Error loading profile"),
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(height: 5.w),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.only(left: 4.w),
+              width: 100.w,
+              constraints: BoxConstraints(maxHeight: 35.w),
+              child: BlocBuilder<LoadUserStoryBloc, LoadUserStoryState>(
+                builder: (context, state) {
+                  if (state is UserStoriesLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is UserStoriesLoaded &&
+                      state.stories.isEmpty) {
+                    return Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
-                            state.user.username,
-                            style: Theme.of(context).textTheme.displayLarge,
+                          Container(
+                            width: 20.w,
+                            height: 20.w,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.contain,
+                                image: themeProvider.themeMode == ThemeMode.dark
+                                    ? const AssetImage(
+                                        'assets/vectors/search-dark.png')
+                                    : const AssetImage(
+                                        'assets/vectors/search-light.png'),
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 4.w),
-                          Text(
-                            state.user.bio,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
+                          const Text('No stories found'),
                         ],
                       ),
-                    ],
-                  );
-                }
-                return const Center(
-                  child: Text("Error loading profile"),
-                );
-              },
-            ),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: SizedBox(height: 5.w),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            padding: EdgeInsets.only(left: 4.w),
-            width: 100.w,
-            constraints: BoxConstraints(maxHeight: 35.w),
-            child: BlocBuilder<LoadUserStoryBloc, LoadUserStoryState>(
-              builder: (context, state) {
-                if (state is UserStoriesLoading) {
+                    );
+                  } else if (state is UserStoriesLoaded) {
+                    return ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: state.stories.length,
+                      itemBuilder: (context, index) {
+                        return StoryCard(
+                          story: state.stories[index],
+                          profile: false,
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(width: 2.w);
+                      },
+                    );
+                  }
                   return const Center(
-                    child: CircularProgressIndicator(),
+                    child: Text("Error loading stories"),
                   );
-                } else if (state is UserStoriesLoaded) {
-                  return ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: state.stories.length,
-                    itemBuilder: (context, index) {
-                      return StoryCard(
-                        story: state.stories[index],
-                        profile: false,
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(width: 2.w);
-                    },
-                  );
-                }
-                return const Center(
-                  child: Text("Error loading stories"),
-                );
-              },
+                },
+              ),
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                onPressed: () {
-                  changePage(0);
-                },
-                icon: Icon(
-                  size: 8.w,
-                  Icons.save,
+          SliverToBoxAdapter(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    changePage(0);
+                  },
+                  icon: Icon(
+                    size: 8.w,
+                    Icons.save,
+                  ),
+                  color: _currentPage == 0
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
                 ),
-                color: _currentPage == 0
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-              ),
-              IconButton(
-                onPressed: () {
-                  changePage(1);
-                },
-                icon: Icon(
-                  size: 8.w,
-                  Icons.bookmark,
+                IconButton(
+                  onPressed: () {
+                    changePage(1);
+                  },
+                  icon: Icon(
+                    size: 8.w,
+                    Icons.bookmark,
+                  ),
+                  color: _currentPage == 1
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.secondary,
                 ),
-                color: _currentPage == 1
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.secondary,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            height: 0.3.w,
-            width: 100.w,
-            color: Theme.of(context).colorScheme.secondary,
+          SliverToBoxAdapter(
+            child: Container(
+              height: 0.3.w,
+              width: 100.w,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
           ),
-        ),
-        _currentPage == 0
-            ? buildPostedPage(context)
-            : buildBookmarkPage(context),
-      ],
+          _currentPage == 0
+              ? buildPostedPage(context, themeProvider)
+              : buildBookmarkPage(context, themeProvider),
+        ],
+      ),
     ));
   }
 
-  Widget buildBookmarkPage(BuildContext context) {
+  Widget buildBookmarkPage(BuildContext context, ThemeProvider themeProvider) {
     return BlocBuilder<BookmarkBloc, BookmarkState>(
       builder: (context, state) {
         if (state is BookmarkLoading) {
           return const SliverFillRemaining(
-            child: CircularProgressIndicator(),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else if (state is BookmarkLoaded && state.bookmarks.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 30.w,
+                    height: 30.w,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.contain,
+                        image: themeProvider.themeMode == ThemeMode.dark
+                            ? const AssetImage('assets/vectors/search-dark.png')
+                            : const AssetImage(
+                                'assets/vectors/search-light.png'),
+                      ),
+                    ),
+                  ),
+                  const Text('No bookmarks yet'),
+                ],
+              ),
+            ),
           );
         } else if (state is BookmarkLoaded) {
           return SliverGrid(
@@ -254,12 +315,35 @@ class _OtherProfilePageState extends State<OtherProfilePage> {
     );
   }
 
-  buildPostedPage(BuildContext context) {
+  buildPostedPage(BuildContext context, ThemeProvider themeProvider) {
     return BlocBuilder<PostedBloc, PostedState>(
       builder: (context, state) {
         if (state is PostedLoading) {
           return const SliverFillRemaining(
-            child: CircularProgressIndicator(),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        } else if (state is PostedLoaded && state.products.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 30.w,
+                    height: 30.w,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.contain,
+                        image: themeProvider.themeMode == ThemeMode.dark
+                            ? const AssetImage('assets/vectors/search-dark.png')
+                            : const AssetImage(
+                                'assets/vectors/search-light.png'),
+                      ),
+                    ),
+                  ),
+                  const Text('No posts found'),
+                ],
+              ),
+            ),
           );
         } else if (state is PostedLoaded) {
           return SliverGrid(

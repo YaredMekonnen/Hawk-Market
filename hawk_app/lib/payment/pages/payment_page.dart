@@ -47,7 +47,7 @@ class _PaymentPageState extends State<PaymentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.background,
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: Icon(

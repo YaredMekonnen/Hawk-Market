@@ -40,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -155,10 +155,26 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: Theme.of(context).textTheme.bodyMedium,
                         decoration: InputDecoration(
                             constraints: BoxConstraints(maxWidth: 90.w),
-                            label: const Text('Confirm Password'),
-                            hintText: "Confirm Password",
+                            label: Text('Confirm Password'),
+                            hintText: 'Confirm Password',
                             labelStyle: Theme.of(context).textTheme.bodyMedium,
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    width: 0.3.w),
+                                borderRadius: BorderRadius.circular(3.w)),
                             border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    width: 0.3.w),
+                                borderRadius: BorderRadius.circular(3.w)),
+                            disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    width: 0.3.w),
                                 borderRadius: BorderRadius.circular(3.w)),
                             alignLabelWithHint: true),
                       ),

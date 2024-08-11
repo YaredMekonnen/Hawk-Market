@@ -58,6 +58,8 @@ dependency_overrides:
   stripe_android: "9.5.0+1"
   stripe_ios: "9.5.0+1"
   stripe_platform_interface: "9.5.0+1"
+  archive: ^3.6.1
+  win32: ^5.5.3
 
 dev_dependencies:
   build_runner: ^2.4.9
@@ -88,7 +90,6 @@ flutter:
   #   - images/a_dot_ham.jpeg
 
   assets:
-    - assets/story/story.jpg
     - assets/forgot.png
     - assets/reset-password.png
     - assets/splash.png
@@ -96,6 +97,10 @@ flutter:
     - assets/vectors/story.png
     - assets/vectors/story-active.png
     - assets/vectors/message.png
+    - assets/vectors/posted.png
+    - assets/vectors/bookmarked.png
+    - assets/vectors/search-light.png
+    - assets/vectors/search-dark.png
     - assets/vectors/message-dark.png
     - assets/vectors/story-dark.png
     - assets/vectors/check.png

@@ -2,6 +2,9 @@ String? emailValidator(String? value) {
   if (value == null || value.isEmpty) {
     return 'Email is required';
   }
+  if (!RegExp(r'^[\w.-]+@uoi\.edu$').hasMatch(value)) {
+    return 'Please enter a valid email';
+  }
   if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
     return 'Please enter a valid email';
   }
@@ -26,7 +29,7 @@ String? discriptionValidator(String? value) {
     return 'This field is required';
   }
   if (value.length < 20) {
-    return 'Can\'t be less than 5 characters';
+    return 'Can\'t be less than 20 characters';
   }
   return null;
 }

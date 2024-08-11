@@ -5,6 +5,8 @@ import 'package:hawk_app/chat/blocs/chats/chats_bloc.dart';
 import 'package:hawk_app/chat/models/chat.dart';
 import 'package:hawk_app/chat/widgets/chat_list_tile.dart';
 import 'package:hawk_app/commons/widgets/button-text.dart';
+import 'package:hawk_app/theme/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ChatsPage extends StatefulWidget {
@@ -21,9 +23,10 @@ class _ChatsPageState extends State<ChatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -51,6 +54,28 @@ class _ChatsPageState extends State<ChatsPage> {
           if (state is ChatsLoading) {
             return const Center(
               child: CircularProgressIndicator(),
+            );
+          }
+          if (state is ChatsLoaded && state.chats.isEmpty) {
+            return Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 30.w,
+                    height: 30.w,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.contain,
+                        image: themeProvider.themeMode == ThemeMode.dark
+                            ? const AssetImage('assets/vectors/search-dark.png')
+                            : const AssetImage(
+                                'assets/vectors/search-light.png'),
+                      ),
+                    ),
+                  ),
+                  const Text('No chats yet'),
+                ],
+              ),
             );
           }
           if (state is ChatsError) {

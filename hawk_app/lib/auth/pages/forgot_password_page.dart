@@ -20,7 +20,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -76,10 +76,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               state is ForgotPasswordSuccess
                           ? null
                           : () {
-                              GoRouter.of(context).go('/verify-otp');
-                              // BlocProvider.of<ForgotPasswordBloc>(context).add(
-                              //   ForgotPassword(email: emailController.text)
-                              // );
+                              BlocProvider.of<ForgotPasswordBloc>(context).add(
+                                  ForgotPassword(email: emailController.text));
                             },
                       style: ButtonStyle(
                         minimumSize: MaterialStateProperty.resolveWith(

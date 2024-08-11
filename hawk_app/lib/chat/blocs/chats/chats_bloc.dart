@@ -36,7 +36,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
         }
         ;
 
-        emit(ChatsLoaded());
+        emit(ChatsLoaded(chats));
       }
     });
 
@@ -46,7 +46,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
       chats.sort((chat1, chat2) =>
           -1 *
           chat1.messages[0].createdAt.compareTo(chat2.messages[0].createdAt));
-      emit(ChatsLoaded());
+      emit(ChatsLoaded(chats));
     });
   }
 }

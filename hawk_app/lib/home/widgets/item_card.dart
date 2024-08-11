@@ -309,11 +309,15 @@ class _ItemCardState extends State<ItemCard> {
                                     child: Container(
                                       width: 7.w,
                                       height: 7.w,
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         image: DecorationImage(
                                           fit: BoxFit.contain,
-                                          image: AssetImage(
-                                              'assets/vectors/story.png'),
+                                          image: themeProvider.themeMode ==
+                                                  ThemeMode.dark
+                                              ? const AssetImage(
+                                                  'assets/vectors/story.png')
+                                              : const AssetImage(
+                                                  'assets/vectors/story-dark.png'),
                                         ),
                                       ),
                                     ),

@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:hawk_app/auth/blocs/auth_cubit/auth_cubit.dart";
+import "package:hawk_app/auth/blocs/sign_in_bloc/sign_in_bloc.dart";
+import "package:hawk_app/auth/blocs/sign_up_bloc/sign_up_bloc.dart";
 import "package:hawk_app/auth/models/user.dart";
 import "package:hawk_app/auth/repository/auth.repository.dart";
 import "package:hawk_app/commons/widgets/custom_network_image.dart";
@@ -177,6 +179,8 @@ class _SidebarState extends State<Sidebar> {
           ),
           ElevatedButton(
             onPressed: () {
+              context.read<SignUpBloc>().add(CloseSignUp());
+              context.read<SignInBloc>().add(CloseSignIn());
               context.read<AuthCubit>().logout();
             },
             style: ElevatedButton.styleFrom(

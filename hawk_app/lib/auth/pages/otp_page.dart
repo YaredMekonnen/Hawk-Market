@@ -31,7 +31,7 @@ class _OtpPageState extends State<OtpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -139,32 +139,24 @@ class _OtpPageState extends State<OtpPage> {
                             ))
                       ],
                     ),
-                    Text(
-                      '00:30',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
                   ],
                 ),
                 BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
                   builder: (context, state) {
                     return ElevatedButton(
-                      onPressed: state is VerifyOtpLoading ||
-                              state is VerifyOtpSuccess
-                          ? null
-                          : () => {
-                                if (getOtpValue().length < 4)
-                                  {
+                      onPressed:
+                          state is VerifyOtpLoading || state is VerifyOtpSuccess
+                              ? null
+                              : () {
+                                  if (getOtpValue().length < 4) {
                                     setState(() {
                                       error = true;
-                                    })
+                                    });
+                                  } else {
+                                    BlocProvider.of<ForgotPasswordBloc>(context)
+                                        .add(VerifyOtp(otp: getOtpValue()));
                                   }
-                                else
-                                  {
-                                    GoRouter.of(context).go('/reset-password')
-                                    //BlocProvider.of<ForgotPasswordBloc>(context).add(VerifyOtp(otp: getOtpValue()))
-                                  }
-                              },
+                                },
                       style: ButtonStyle(
                         minimumSize: MaterialStateProperty.resolveWith(
                             (states) => Size(90.w, 13.w)),

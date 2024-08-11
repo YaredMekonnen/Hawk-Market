@@ -66,7 +66,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -119,6 +119,8 @@ class _CreateProductPageState extends State<CreateProductPage> {
                           vertical: 2.5.w, horizontal: 2.5.w),
                       selectionType: SelectionType.multi,
                       chipConfig: ChipConfig(
+                          deleteIconColor:
+                              Theme.of(context).colorScheme.secondary,
                           backgroundColor:
                               Theme.of(context).colorScheme.background,
                           radius: 2.w,
@@ -299,7 +301,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).colorScheme.secondary,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                     ),
                     child: Text('Discard',
                         style: Theme.of(context)

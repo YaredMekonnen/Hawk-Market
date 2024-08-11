@@ -12,6 +12,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
   SignUpBloc(this.authRepository) : super(SignUpInitial()) {
     on<SignUp>(handleSignUp);
+    on<CloseSignUp>((event, emit) {
+      emit(SignUpInitial());
+    });
   }
 
   handleSignUp(SignUp event, emit) async {

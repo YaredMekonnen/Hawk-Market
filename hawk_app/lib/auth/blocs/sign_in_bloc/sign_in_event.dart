@@ -10,4 +10,6 @@ class SignIn extends SignInEvent {
   SignIn({required this.email, required this.password});
 }
 
+class CloseSignIn extends SignInEvent {}
+
 class SignOut extends SignInEvent {}

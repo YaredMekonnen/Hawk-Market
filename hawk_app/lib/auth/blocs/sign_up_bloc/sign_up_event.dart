@@ -16,4 +16,6 @@ class SignUp extends SignUpEvent {
       this.image});
 }
 
+class CloseSignUp extends SignUpEvent {}
+
 class SignOut extends SignUpEvent {}

@@ -11,6 +11,9 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
   SignInBloc(this.authRepository) : super(SignInIntial()) {
     on<SignIn>(handleSignIn);
+    on<CloseSignIn>((event, emit) {
+      emit(SignInIntial());
+    });
   }
 
   handleSignIn(event, emit) async {

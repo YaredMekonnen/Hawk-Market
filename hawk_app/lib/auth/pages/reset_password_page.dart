@@ -28,7 +28,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             GoRouter.of(context).go('/verify-email');
           },
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.background,
         surfaceTintColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -70,6 +70,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         hintText: "New Password",
                         controller: newPasswordController,
                         validator: passwordValidator,
+                        password: true,
                       ),
                     ],
                   ),
@@ -80,10 +81,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       onPressed: state is ResetPasswordLoading ||
                               state is ResetPasswordSuccess
                           ? null
-                          : () => {
-                                GoRouter.of(context).go('/login')
-                                //BlocProvider.of<ForgotPasswordBloc>(context).add(ResetPassword(password: newPasswordController.text))
-                              },
+                          : () {
+                              BlocProvider.of<ForgotPasswordBloc>(context).add(
+                                  ResetPassword(
+                                      password: newPasswordController.text));
+                            },
                       style: ButtonStyle(
                         minimumSize: MaterialStateProperty.resolveWith(
                             (states) => Size(90.w, 13.w)),

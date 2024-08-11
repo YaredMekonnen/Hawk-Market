@@ -222,6 +222,29 @@ class _ItemListPageState extends State<ItemListPage> {
                       child: CircularProgressIndicator(),
                     );
                   }
+                  if (state is ProductListLoaded && state.products.isEmpty) {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            width: 30.w,
+                            height: 30.w,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                fit: BoxFit.contain,
+                                image: themeProvider.themeMode == ThemeMode.dark
+                                    ? const AssetImage(
+                                        'assets/vectors/search-dark.png')
+                                    : const AssetImage(
+                                        'assets/vectors/search-light.png'),
+                              ),
+                            ),
+                          ),
+                          const Text('No products found'),
+                        ],
+                      ),
+                    );
+                  }
                   if (state is ProductListLoaded) {
                     products = state.products;
                   }
