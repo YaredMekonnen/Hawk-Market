@@ -155,7 +155,7 @@ export class UserService {
     } else {
 
       const updatedUser = await this.userModel.findByIdAndUpdate(userId, {
-          $push: {
+          $addToSet: {
             bookmarks: new Types.ObjectId(productId)
           }
         },

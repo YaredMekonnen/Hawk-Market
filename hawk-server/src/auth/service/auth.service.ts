@@ -45,14 +45,14 @@ export class AuthService {
     return token;
   }
 
-  async register(createUserDto: CreateUserDto, image: Express.Multer.File) {
+  async register(createUserDto: CreateUserDto, image?: Express.Multer.File) {
     const userExist = await this.usersService.checkUser(createUserDto.email);
 
     if (userExist) {
       throw new ConflictException('User Already Exist');
     }
 
-    const photoUrl = await this.cloudinaryService.upload(image);
+    const photoUrl = image ? await this.cloudinaryService.upload(image) : "";
     createUserDto.profileUrl = photoUrl;
 
     const user = await this.usersService.create(createUserDto);
@@ -73,7 +73,7 @@ export class AuthService {
       throw new BadRequestException('User Not Found');
     }
 
-    const otp = otpGenerator.generate(6, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
+    const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false });
 
     await sendOtp(user.email, otp);
 

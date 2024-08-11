@@ -33,10 +33,9 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('image'))
   async register(
     @Body() createUserDto: CreateUserDto, 
-    @UploadedFile() image: Express.Multer.File
+    @UploadedFile() image?: Express.Multer.File
   ) {
     const response = await this.authService.register(createUserDto, image);
-
     return new RTO(true, response);
   }
 

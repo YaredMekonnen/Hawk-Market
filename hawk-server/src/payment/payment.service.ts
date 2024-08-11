@@ -53,7 +53,6 @@ export class PaymentService {
 		}
 	}
 
-
 	generateResponse(intent: Stripe.PaymentIntent) {
 		// Generate a response based on the intent's status
 		switch (intent.status) {

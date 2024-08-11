@@ -103,7 +103,6 @@ export class ProductController {
 
   @Post('story/:id')
   async makeStory(@Param('id') id: string) {
-    console.log(id);
     const response = await this.productService.createStory(id);
     return new RTO(true, response);
   }
